@@ -9,7 +9,7 @@ services:
       - "8080:8080"
     volumes:
       - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
-      - haproxy_socket:/var/run/haproxy/
+      - haproxy_socket:/tmp/
     networks:
       - cluster_network
 
