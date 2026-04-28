@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  haproxy:
+    image: haproxy:2.6
+    container_name: haproxy_lb
+    ports:
+      - "8081:80"
+      - "8080:8080"
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - haproxy_socket:/var/run/haproxy/
+    networks:
+      - cluster_network
+
+  backend1:
+    build: ./backends
+    container_name: backend1
+    networks:
+      - cluster_network
+
+  backend2:
+    build: ./backends
+    container_name: backend2
+    networks:
+      - cluster_network
+
+  backend3:
+    build: ./backends
+    container_name: backend3
+    networks:
+      - cluster_network
+
+networks:
+  cluster_network:
+    driver: bridge
+
+volumes:
+  haproxy_socket:
