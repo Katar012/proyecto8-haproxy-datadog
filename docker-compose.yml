@@ -31,6 +31,28 @@ services:
     networks:
       - cluster_network
 
+  datadog:
+    image: registry.datadoghq.com/agent:7
+    container_name: dd-agent
+    environment:
+      - DD_API_KEY=${DD_API_KEY}
+      - DD_SITE=datadoghq.com
+      - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+      - DD_APM_ENABLED=true
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./datadog/datadog.yaml:/etc/datadog-agent/datadog.yaml:ro
+      - ./datadog/haproxy.d:/etc/datadog-agent/conf.d/haproxy.d:ro
+      - haproxy_socket:/tmp/
+    networks:
+      - cluster_network
+
 networks:
   cluster_network:
     driver: bridge
