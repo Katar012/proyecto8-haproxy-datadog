@@ -15,7 +15,7 @@ graph TD;
 ```
 
 --------------------------------------------------------------------
-## Configuración de Datadog (API Key)
+## Configuración de Datadog (API Key) (esto lo haces despues de hacer git clone y entrar a la maquina virtual)
 
 1. Ingresar a [Datadog](https://app.datadoghq.com/).
 2. En la barra de busqueda ingresar "API KEYS"
@@ -53,11 +53,10 @@ Este ciclo verificara que tenemos un balance entre los 3 backends.
 Una vez todo este preparado, ingresar al [Dashboard](https://p.us5.datadoghq.com/sb/85988188-4804-11f1-bc34-5ef128fabc1b-9f9dd79c16fcbd4c9aabbd251896a864).
 
 ## Segunda Parte: Integracion Datadog
+# (ahora si haces lo del api de datadog y lo pones en el .env)
 
 ## Tercera Parte: Generación de tráfico y observabilidad
 
-<<<<<<< HEAD
-=======
 La generacion de trafico con artillery es muy sencilla, cada archivo de prueba esta guardado y configurado en la carpeta /artillery que se encuentra en la raiz del repositorio.
 Para crear una prueba especifica con creamos un archivo cualquiernombre.yml y configuramos dicho archivo con target hacia http://haproxy, las fases (duraciones y numero de clientes (arrivalRate)) pueden ser configuradas a gusto.
 
@@ -65,7 +64,6 @@ Para crear una prueba especifica con creamos un archivo cualquiernombre.yml y co
 2. Detendremos el proceso artillery con ```docker-compose down artillery``` (NOTA PARA COLABORADORES: Esto puede evitarse con una configuracion despues)
 3. Luego corremos la prueba con ```docker compose run --rm artillery run cualquiernombre.yml```. Especificando el nombre del archivo yml creado anteriormente.
 4. En 1 minuto Datadog mostrara el trafico en el dashboard, NO SERA INSTANTANEO.
->>>>>>> dev
 --------------------------------------------------------------------
 # Integrantes
 
