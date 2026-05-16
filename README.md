@@ -39,7 +39,7 @@ docker-compose up --build -d
 ```bash
 for i in {1..10}; do curl -s localhost:8081; done
 ```
-Este ciclo verificara que tenemos un balance entre los 3 backends, una vez todo este preparado ingresar a 
+Este ciclo verificara que tenemos un balance entre los 3 backends, una vez todo este preparado, ingresar al [Dashboard](https://p.us5.datadoghq.com/sb/85988188-4804-11f1-bc34-5ef128fabc1b-9f9dd79c16fcbd4c9aabbd251896a864).
 
 --------------------------------------------------------------------
 # Integrantes
