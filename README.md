@@ -10,7 +10,7 @@ graph TD;
     HAProxy-->|Balanceo| Backend1;
     HAProxy-->|Balanceo| Backend2;
     HAProxy-->|Balanceo| Backend3;
-    HAProxy-.->|Métricas UNIX Socket| DatadogAgent;
+    HAProxy-.->|Métricas UNIX Socket| Datadog;
     DatadogAgent-->|Métricas y Logs JSON| DatadogCloud;
 ```
 
