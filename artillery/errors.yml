@@ -1,0 +1,10 @@
+config:
+  target: "http://haproxy"
+  phases:
+    - duration: 20
+      arrivalRate: 10
+
+scenarios:
+  - flow:
+      - get:
+          url: "/error"

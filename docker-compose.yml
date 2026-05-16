@@ -53,6 +53,15 @@ services:
     networks:
       - cluster_network
 
+  artillery:
+    image: artilleryio/artillery
+    container_name: artillery
+    volumes:
+      - ./artillery:/scripts
+    working_dir: /scripts
+    networks: 
+      - cluster_network
+
 networks:
   cluster_network:
     driver: bridge
