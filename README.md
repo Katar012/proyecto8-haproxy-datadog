@@ -60,6 +60,6 @@ Una vez todo este preparado, ingresar al [Dashboard](https://p.us5.datadoghq.com
 # Integrantes
 
 ### Juan David Cuero Reina.
-### Juan Esteban Vila Marin.
+### Juan Esteban Vila Martin.
 ### Alejandro Rodriguez.
 ### Diego Alejandro Ramirez.
