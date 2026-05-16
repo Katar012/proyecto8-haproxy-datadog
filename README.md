@@ -17,14 +17,10 @@ graph TD;
 --------------------------------------------------------------------
 ## Configuración de Datadog (API Key)
 
-Para enviar nuestras métricas, usamos el Agente de Datadog. Por seguridad, la llave del API **no se debe escribir directamente en el código** (hardcodear). Sigue estos pasos:
-
-1. Ingresa a tu cuenta en [Datadog](https://app.datadoghq.com/).
-2. Ve a **Organization Settings** -> **API Keys** y obtén tu clave.
-3. En la raíz de este proyecto, copia o renombra el archivo `.env.example` a un nuevo archivo llamado `.env`.
-4. Abre el archivo `.env` y pega tu clave para que quede así: `DD_API_KEY=tu_clave_aqui`
-
-*(Nota: El archivo `.env` ya está configurado en el `.gitignore` para jamás subirse al repositorio, manteniendo tu clave segura).*
+1. Ingresar a [Datadog](https://app.datadoghq.com/).
+2. En la barra de busqueda ingresar "API KEYS"
+3. En la raíz de este proyecto, abrir el archivo .env
+4. Pegar para que quede asi: `DD_API_KEY=tu_clave_aqui`
 
 --------------------------------------------------------------------
 # Ejecución
@@ -43,6 +39,8 @@ docker-compose up --build -d
 ```bash
 for i in {1..10}; do curl -s localhost:8081; done
 ```
+Este ciclo verificara que tenemos un balance entre los 3 backends, una vez todo este preparado ingresar a 
+
 --------------------------------------------------------------------
 # Integrantes
 
