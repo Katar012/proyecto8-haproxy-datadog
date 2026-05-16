@@ -56,6 +56,16 @@ Una vez todo este preparado, ingresar al [Dashboard](https://p.us5.datadoghq.com
 
 ## Tercera Parte: Generación de tráfico y observabilidad
 
+<<<<<<< HEAD
+=======
+La generacion de trafico con artillery es muy sencilla, cada archivo de prueba esta guardado y configurado en la carpeta /artillery que se encuentra en la raiz del repositorio.
+Para crear una prueba especifica con creamos un archivo cualquiernombre.yml y configuramos dicho archivo con target hacia http://haproxy, las fases (duraciones y numero de clientes (arrivalRate)) pueden ser configuradas a gusto.
+
+1. Anteriormente se ingreso ```docker-compose up --build -d```
+2. Detendremos el proceso artillery con ```docker-compose down artillery``` (NOTA PARA COLABORADORES: Esto puede evitarse con una configuracion despues)
+3. Luego corremos la prueba con ```docker compose run --rm artillery run cualquiernombre.yml```. Especificando el nombre del archivo yml creado anteriormente.
+4. En 1 minuto Datadog mostrara el trafico en el dashboard, NO SERA INSTANTANEO.
+>>>>>>> dev
 --------------------------------------------------------------------
 # Integrantes
 

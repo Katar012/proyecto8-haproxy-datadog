@@ -12,4 +12,8 @@ def index():
 def metrics():
     return "requests_total 1\n"
 
+@app.route("/error")
+def error():
+    return "Internal Error", 500
+
 app.run(host="0.0.0.0", port=80)
