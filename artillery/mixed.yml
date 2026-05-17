@@ -1,0 +1,19 @@
+config:
+  target: "http://haproxy"
+  phases:
+    - duration: 30
+      arrivalRate: 20
+      name: "Tráfico mixto (90% normal, 10% errores)"
+
+scenarios:
+  - name: "Peticiones exitosas"
+    weight: 9
+    flow:
+      - get:
+          url: "/"
+
+  - name: "Peticiones con error"
+    weight: 1
+    flow:
+      - get:
+          url: "/error"

@@ -1,0 +1,13 @@
+config:
+  target: "http://haproxy"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      name: "Tráfico con llamadas lentas"
+
+scenarios:
+  - flow:
+      - get:
+          url: "/"
+      - get:
+          url: "/slow"
