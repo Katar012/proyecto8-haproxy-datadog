@@ -3,21 +3,158 @@
 <head>
     <title>HAProxy Upload Cluster</title>
     <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --primary: #3182ce;
+            --primary-hover: #2b6cb0;
+            --success: #38a169;
+            --success-hover: #2f855a;
+            --border-color: #e2e8f0;
+        }
+
         body {
-            font-family: Arial;
-            max-width: 600px;
-            margin: 40px auto;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            max-width: 650px;
+            margin: 60px auto;
+            padding: 0 20px;
+            line-height: 1.5;
         }
 
         .box {
-            border: 1px solid #ccc;
-            padding: 20px;
-            border-radius: 10px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
-        button {
+        h2 {
+            margin-top: 0;
+            color: var(--text-main);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        p {
+            font-size: 14px;
+            color: var(--text-muted);
+            background: var(--bg-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 25px;
+        }
+
+        p strong {
+            color: var(--primary);
+            font-family: monospace;
+            font-size: 15px;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid var(--border-color);
+            margin: 25px 0;
+        }
+
+        h3 {
+            font-size: 18px;
+            color: var(--text-main);
+            margin-bottom: 15px;
+        }
+
+        /* Lista de archivos estilizada */
+        #fileList {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0 25px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-color);
+        }
+
+        #fileList li {
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        #fileList li:last-child {
+            border-bottom: none;
+        }
+
+        #fileList li a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        #fileList li a:hover {
+            text-decoration: underline;
+        }
+
+        /* Input de tipo archivo personalizado sutilmente */
+        input[type="file"] {
+            display: block;
+            width: 100%;
             padding: 10px;
-            margin-top: 10px;
+            background: var(--bg-color);
+            border: 1px dashed var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+
+        /* Botones modernos */
+        button {
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        /* Botón de refrescar (Secundario) */
+        button[onclick="loadFiles()"] {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        button[onclick="loadFiles()"]:hover {
+            background-color: var(--border-color);
+        }
+
+        /* Botón de subir (Primario/Éxito) */
+        button[type="submit"] {
+            background-color: var(--success);
+            color: white;
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: var(--success-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
@@ -30,6 +167,15 @@
     <p>Backend Node: <strong>{{ node }}</strong></p>
 
     <form action="/upload" method="post" enctype="multipart/form-data">
+        <hr>
+
+        <h3>Uploaded Files</h3>
+
+        <button type="button" onclick="loadFiles()">
+            Refresh Files
+        </button>
+
+        <ul id="fileList"></ul>
 
         <input type="file" name="file" required>
         <br>
@@ -37,10 +183,39 @@
         <button type="submit">
             Upload
         </button>
-
+        
     </form>
 
 </div>
+<script>
 
+async function loadFiles() {
+
+    const response = await fetch("/files")
+
+    const data = await response.json()
+
+    const fileList = document.getElementById("fileList")
+
+    fileList.innerHTML = ""
+
+    data.files.forEach(file => {
+
+        const li = document.createElement("li")
+
+        li.innerHTML = `
+            <span>${file}</span>
+            <a href="/download/${file}">
+                Download
+            </a>
+        `
+
+        fileList.appendChild(li)
+    })
+}
+
+loadFiles()
+
+</script>
 </body>
 </html>

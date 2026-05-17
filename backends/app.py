@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, send_file
 import os
 import socket
 import paramiko
@@ -73,15 +73,69 @@ def upload():
             "error": str(e)
         }), 500
 
+def get_sftp():
+
+    transport = paramiko.Transport((SFTP_HOST, SFTP_PORT))
+
+    transport.connect(
+        username=SFTP_USER,
+        password=SFTP_PASS
+    )
+
+    sftp = paramiko.SFTPClient.from_transport(transport)
+
+    return transport, sftp
+
+@app.route("/download/<filename>")
+def download(filename):
+
+    try:
+
+        transport, sftp = get_sftp()
+
+        remote_path = f"{REMOTE_DIR}/{filename}"
+
+        temp = tempfile.NamedTemporaryFile(delete=False)
+
+        sftp.get(remote_path, temp.name)
+
+        sftp.close()
+        transport.close()
+
+        return send_file(
+            temp.name,
+            as_attachment=True,
+            download_name=filename
+        )
+
+    except Exception as e:
+
+        return jsonify({
+            "error": str(e)
+        }), 500
+
 @app.route("/files")
 def files():
 
-    files = os.listdir(UPLOAD_FOLDER)
+    try:
 
-    return jsonify({
-        "node": node_id,
-        "files": files
-    })
+        transport, sftp = get_sftp()
+
+        files = sftp.listdir(REMOTE_DIR)
+
+        sftp.close()
+        transport.close()
+
+        return jsonify({
+            "node": node_id,
+            "files": files
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "error": str(e)
+        }), 500
 
 @app.route("/metrics")
 def metrics():
