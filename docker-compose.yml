@@ -16,18 +16,30 @@ services:
   backend1:
     build: ./backends
     container_name: backend1
+    environment:
+      - NODE_ID=backend1
+    volumes:
+      - ./backends/uploads:/app/uploads
     networks:
       - cluster_network
 
   backend2:
     build: ./backends
     container_name: backend2
+    environment:
+      - NODE_ID=backend2
+    volumes:
+      - ./backends/uploads:/app/uploads
     networks:
       - cluster_network
 
   backend3:
     build: ./backends
     container_name: backend3
+    environment:
+      - NODE_ID=backend3
+    volumes:
+      - ./backends/uploads:/app/uploads
     networks:
       - cluster_network
 

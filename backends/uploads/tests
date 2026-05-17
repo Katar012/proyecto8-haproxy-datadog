@@ -1,0 +1,5 @@
+Para ver si coge la api: docker exec -it dd-agent env | grep DD_API_KEY
+
+Para ver si el socket existe: docker exec -it dd-agent ls /tmp
+
+Para que datadog registre 1 reqs/s: for i in {1..30}; do curl -s localhost:8081; sleep 0.1; done
