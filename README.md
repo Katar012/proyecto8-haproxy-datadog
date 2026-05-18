@@ -118,6 +118,9 @@ En Datadog, se da click en new dashboard y añadimos widget usando la opcion jso
 4. Baja hasta encontrar la opción **"Notify if data is missing"** y pon que avise si no hay datos por más de 1 minuto.
 5. Usa `{{image_name.name}}` en el título para saber exactamente cuál de los 3 se apagó.
 --------------------------------------------------------------------
+# Documentacion
+Enlace a documentacion: https://docs.google.com/document/d/1qb9W9gCYmazZALAtgiCaq1qKk_oygViP/edit?usp=sharing&ouid=106756143487291349925&rtpof=true&sd=true
+--------------------------------------------------------------------
 # Integrantes
 
 ### Juan David Cuero Reina.
