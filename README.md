@@ -6,13 +6,32 @@ El siguiente diagrama muestra cómo interactúan los componentes dentro de la m�
 
 ```mermaid
 graph TD;
-    User-->|Peticiones HTTP| HAProxy;
-    HAProxy-->|Balanceo| Backend1;
-    HAProxy-->|Balanceo| Backend2;
-    HAProxy-->|Balanceo| Backend3;
-    HAProxy-.->|Métricas UNIX Socket| Datadog;
-    Datadog-->|Métricas y Logs JSON| DatadogCloud;
+
+    User -->|HTTP Requests| HAProxy
+
+    HAProxy -->|Round Robin| Backend1
+    HAProxy -->|Round Robin| Backend2
+    HAProxy -->|Round Robin| Backend3
+
+    Backend1 -->|SFTP Upload| StorageVM
+    Backend2 -->|SFTP Upload| StorageVM
+    Backend3 -->|SFTP Upload| StorageVM
+
+    StorageVM -->|Serve Files| NGINX
+
+    HAProxy -.->|Metrics Socket| Datadog
+    Datadog -->|Metrics & Logs| DatadogCloud
 ```
+
+## Arquitectura stateless
+
+Los contenedores backend Flask no almacenan archivos localmente.
+
+Toda persistencia se delega a la máquina storage mediante:
+- SFTP para uploads
+- Nginx para distribución de archivos
+
+Esto permite mantener backends stateless detras del balanceador HAProxy.
 --------------------------------------------------------------------
 # Ejecución
 
@@ -36,16 +55,16 @@ docker-compose up -d
 ## Primera Parte: Cluster HAProxy con backends
 
 1. El estado de los backends se puede verificar desde el host en la [pagina de estadisticas de haproxy](http://192.168.65.10:8080/stats) o la ip de la maquina http://192.168.65.10:8080/stats.
-Tambien podemos verificar de manera extra en http://192.168.65.10:8081/metrics la respuesta de los backends.
 
-3. Luego verificamos en otra ventana de la misma maquina virtual "lab"
+3. Luego verificamos en otra ventana de la misma maquina virtual "lab" el roundrobin con este comando:
 ```bash
 for i in {1..10}; do curl -s http://localhost:8081/health; echo ""; done
 ```
-Este ciclo verificara que tenemos una respuesta adecuada de los 3 backends.
+Este ciclo verifica roundrobin.
 
 3. Con ```docker-compose logs haproxy``` podemos visualizar registros estructurados con la siguiente estructura por ejemplificar:
-```{"backend":"web_back","server":"backend1","status":200}```
+```{"backend":"web_back","server":"backend1","status":200}
+```
 
 ## Segunda Parte: Integración Datadog y Regiones
 NOTA: Datadog tiene multiples regiones (ej: US1, US3, US5, EU). Es importante que la variable `DD_SITE` en el archivo `docker-compose.yml` coincida exactamente con la región de la cuenta donde se sacó la API KEY. Si la api es del sito region por defecto (US1), el site debe ser `datadoghq.com`. Con el correo institucional de la autonoma aveces varia a `us5.datadoghq.com`, es muy importante que DD_SITE apunte al sitio donde se creo la cuenta. ¡POR FAVOR REVISAR docker-compose.yml!
@@ -61,7 +80,7 @@ Hemos creado diferentes escenarios de prueba en la carpeta `artillery/` para est
 
 - `normal.yml`: Tráfico estándar.
 - `spike.yml`: Pico de tráfico repentino.
-- `errors400.yml y errors500.yml`: Dispara 100% de errores HTTP 500 o HTTP 400.
+- `errors400.yml y errors500.yml`: Generan solicitudes que retornan errores HTTP 500 o HTTP 400.
 - `latency.yml`: Dispara peticiones al endpoint `/slow` para simular lentitud y ver cómo se eleva la gráfica de latencia promedio.
 - `soak.yml`: Prueba de larga duración (5 minutos) para validar estabilidad y consumo de RAM.
 - `mixed.yml`: 90% tráfico sano y 10% tráfico con errores (ideal para ver cómo se separan las gráficas de peticiones vs errores).
@@ -77,6 +96,7 @@ Se creo una maquina virtual adicional que contiene un servicio sftp, la maquina 
 ```
 cd proyecto8-haproxy-datadog
 vagrant up
+vagrant provision storage
 vagrant ssh storage
 cd /sftp/uploads
 ```
@@ -89,8 +109,28 @@ sftp sftpuser@192.168.65.20
 cd uploads
 ls
 ```
-La subida y bajada de archivos sera directamente probada en el [frontend](http://192.168.65.10:8081) con direccion a http://192.168.65.10:8081/
+La subida de archivos se realiza desde el Flask [frontend](http://192.168.65.10:8081) con direccion a http://192.168.65.10:8081/
 
+Y la descarga de archivos es servida directamente por Nginx desde la maquina storage (En version 4.0.0 hacia adelante)
+
+NOTA: Anteriormente en la version 3.2.0 Flask se encargaba de la carga y descarga de archivos a la vez, demorando mucho en archivos superiores a las 200mb.
+
+## Implementacion de Nginx
+Para relegar a flask unicamente a la logica de los backends y la subida de archivos, utilizamos Nginx con la finalidad de aliviar la descarga de archivos, evitando asi tener que ocupar de un timeout mas largo para que flask termine de procesar la solicitud de descarga exitosamente.
+
+Flask queda unicamente encargado de:
+- Logica backend
+- Subida de archivos via sftp
+
+Nginx hace lo siguiente:
+- Maneja descargas http
+- Reduce la carga sobre los backends Flask
+- Y ademas tenemos un nuevo [endpoint](http://192.168.65.20/files/) en http://192.168.65.20/files/ con tamaños de archivos y timestamps
+
+En caso tal de limpiar el entorno mal (o que el consumo de cpu y ram no aparezcan en el dashboard) se debe reiniciar datadog con el siguiente comando:
+
+```docker-compose restart datadog
+```
 ## Prueba en Datadog
 
 1. Creacion de Dashboards (Uso de JSON)
@@ -114,8 +154,8 @@ En Datadog, se da click en new dashboard y añadimos widget usando la opcion jso
 4. Baja hasta encontrar la opción **"Notify if data is missing"** y pon que avise si no hay datos por más de 1 minuto.
 5. Usa `{{image_name.name}}` en el título para saber exactamente cuál de los 3 se apagó.
 --------------------------------------------------------------------
-# Documentacion
-Enlace a documentacion: https://docs.google.com/document/d/1qb9W9gCYmazZALAtgiCaq1qKk_oygViP/edit?usp=sharing&ouid=106756143487291349925&rtpof=true&sd=true
+# Informe
+Enlace a informe: https://docs.google.com/document/d/1qb9W9gCYmazZALAtgiCaq1qKk_oygViP/edit?usp=sharing&ouid=106756143487291349925&rtpof=true&sd=true
 --------------------------------------------------------------------
 # Integrantes
 
