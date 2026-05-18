@@ -138,6 +138,10 @@ def files():
             "error": str(e)
         }), 500
 
+@app.route("/error")
+def error_endpoint():
+    return jsonify({"error": "Simulated"}), 500
+
 @app.route("/metrics")
 def metrics():
     return "requests_total 1\n"

@@ -3,17 +3,23 @@ config:
   phases:
     - duration: 30
       arrivalRate: 20
-      name: "Tráfico mixto (90% normal, 10% errores)"
+      name: "Tráfico mixto (80% normal, 20% errores)"
 
 scenarios:
   - name: "Peticiones exitosas"
-    weight: 9
+    weight: 8
     flow:
       - get:
           url: "/"
 
-  - name: "Peticiones con error"
+  - name: "Peticiones con error 500"
     weight: 1
     flow:
       - get:
           url: "/error"
+
+  - name: "Peticiones con error 400"
+    weight: 1
+    flow:
+      - get:
+          url: "/upload"

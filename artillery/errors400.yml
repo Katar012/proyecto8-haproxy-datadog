@@ -1,0 +1,11 @@
+config:
+  target: "http://haproxy:80"
+  phases:
+    - duration: 20
+      arrivalRate: 10
+      name: "Errores 400 en /upload"
+
+scenarios:
+  - flow:
+      - post:
+          url: "/upload"

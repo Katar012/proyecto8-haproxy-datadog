@@ -3,12 +3,15 @@ config:
   phases:
     - duration: 15
       arrivalRate: 5
+      name: "Peticiones en alza repentina"
 
     - duration: 20
       arrivalRate: 50
+      name: "Peticiones en alza repentina"
 
     - duration: 15
       arrivalRate: 5
+      name: "Peticiones en alza repentina"
 
 scenarios:
   - flow:

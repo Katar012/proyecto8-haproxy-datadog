@@ -33,12 +33,17 @@ cd proyecto8-haproxy-datadog
 vagrant up
 vagrant ssh lab
 cd /vagrant
+docker-compose up --build -d
+
+O SI NO ES PRIMERA VEZ:
+
 docker-compose build --no-cache
 docker-compose up -d
+
 ```
 ## Primera Parte: Cluster HAProxy con backends
 
-1. El estado de los backends se puede verificar desde el host en la [pagina de estadisticas de haproxy](http://192.168.65.10:8080) o la ip de la maquina http://192.168.65.10:8080.
+1. El estado de los backends se puede verificar desde el host en la [pagina de estadisticas de haproxy](http://192.168.65.10:8080/stats) o la ip de la maquina http://192.168.65.10:8080/stats.
 Tambien podemos verificar de manera extra en http://192.168.65.10:8081/metrics la respuesta de los backends.
 
 3. Luego verificamos en otra ventana de la misma maquina virtual "lab"
