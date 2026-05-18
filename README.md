@@ -32,6 +32,7 @@ Toda persistencia se delega a la máquina storage mediante:
 - Nginx para distribución de archivos
 
 Esto permite mantener backends stateless detras del balanceador HAProxy.
+
 --------------------------------------------------------------------
 # Ejecución
 
