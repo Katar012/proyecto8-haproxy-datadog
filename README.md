@@ -109,6 +109,12 @@ Se ejecutan con el siguiente comando DESDE LA MAQUINA LAB:
 ```bash
 docker-compose run --rm artillery run latency.yml
 ```
+
+NOTA: Para ejecutar las pruebas traficoFlask.yml y traficoNginx.yml usaremos el archivo test.txt de la carpeta artillery, crear en caso tal de que no este con el comando: 
+```
+echo "archivo de prueba" > artillery/test.txt
+```
+
 Se cambia obviamente el nombre del archivo por el que se desee usar, en este caso se uso latency.yml.
 
 ## Generacion de trafico con sftp

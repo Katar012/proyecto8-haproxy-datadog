@@ -1,0 +1,21 @@
+config:
+  target: "http://haproxy"
+
+  phases:
+    - duration: 60
+      arrivalRate: 10
+
+scenarios:
+
+  - name: "Upload Files"
+
+    flow:
+
+      - post:
+
+          url: "/upload"
+
+          formData:
+
+            file:
+              fromFile: "./test.txt"

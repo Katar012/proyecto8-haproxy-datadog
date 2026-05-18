@@ -1,0 +1,16 @@
+config:
+  target: "http://192.168.65.20"
+
+  phases:
+    - duration: 60
+      arrivalRate: 30
+
+scenarios:
+
+  - name: "Download Files"
+
+    flow:
+
+      - get:
+
+          url: "/files/test.txt"

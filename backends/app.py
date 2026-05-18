@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, jsonify, send_file
+from flask import Flask, request, render_template, jsonify, send_file, send_from_directory
 import os
 import socket
 import paramiko
@@ -137,6 +137,38 @@ def files():
         return jsonify({
             "error": str(e)
         }), 500
+
+@app.route("/delete/<filename>", methods=["POST"])
+def delete_file(filename):
+
+    transport = paramiko.Transport(("192.168.65.20", 22))
+    transport.connect(username="sftpuser", password="1234")
+
+    sftp = paramiko.SFTPClient.from_transport(transport)
+
+    remote_path = f"/uploads/{filename}"
+
+    try:
+
+        sftp.remove(remote_path)
+
+        sftp.close()
+        transport.close()
+
+        return {
+            "status": "success",
+            "deleted": filename
+        }
+
+    except Exception as e:
+
+        sftp.close()
+        transport.close()
+
+        return {
+            "status": "error",
+            "message": str(e)
+        }, 500
 
 @app.route("/error")
 def error_endpoint():
