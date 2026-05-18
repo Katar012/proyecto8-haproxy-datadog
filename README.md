@@ -63,9 +63,7 @@ for i in {1..10}; do curl -s http://localhost:8081/health; echo ""; done
 ```
 Este ciclo verifica roundrobin.
 
-3. Con ```docker-compose logs haproxy``` podemos visualizar registros estructurados con la siguiente estructura por ejemplificar:
-```{"backend":"web_back","server":"backend1","status":200}
-```
+3. Con ```docker-compose logs haproxy``` podemos visualizar registros estructurados.
 
 ## Segunda Parte: Integración Datadog y Regiones
 NOTA: Datadog tiene multiples regiones (ej: US1, US3, US5, EU). Es importante que la variable `DD_SITE` en el archivo `docker-compose.yml` coincida exactamente con la región de la cuenta donde se sacó la API KEY. Si la api es del sito region por defecto (US1), el site debe ser `datadoghq.com`. Con el correo institucional de la autonoma aveces varia a `us5.datadoghq.com`, es muy importante que DD_SITE apunte al sitio donde se creo la cuenta. ¡POR FAVOR REVISAR docker-compose.yml!
