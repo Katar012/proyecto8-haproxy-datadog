@@ -26,8 +26,9 @@ vagrant ssh lab
 cd /vagrant
 docker-compose up --build -d
 
-O SI NO ES PRIMERA VEZ:
+EN CASO TAL DE ERRORES POR ESTADO CORRUPTO:
 
+docker-compose down -v --remove-orphans
 docker-compose build --no-cache
 docker-compose up -d
 

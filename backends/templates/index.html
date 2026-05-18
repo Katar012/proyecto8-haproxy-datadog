@@ -203,9 +203,10 @@ async function loadFiles() {
 
         const li = document.createElement("li")
 
-        li.innerHTML = `
-            <span>${file}</span>
-            <a href="/download/${file}">
+        li.innerHTML =  `
+            ${file}
+            -
+            <a href="http://192.168.65.20/files/${file}">
                 Download
             </a>
         `

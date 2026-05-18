@@ -32,9 +32,11 @@ Vagrant.configure("2") do |config|
 
     vm.vm.provision "shell", inline: <<-SHELL
       apt update
-      apt install -y openssh-server
+      apt install -y openssh-server nginx
       systemctl enable ssh
       systemctl start ssh
+      systemctl enable nginx
+      systemctl restart nginx
       mkdir -p /sftp/uploads
       useradd -m sftpuser
       echo "sftpuser:1234" | chpasswd
@@ -53,6 +55,31 @@ Match User sftpuser
 EOF
 
 systemctl restart ssh
+
+cat > /etc/nginx/sites-available/sftp-files <<EOF
+
+server {
+
+    listen 80;
+
+    server_name _;
+
+    location /files/ {
+
+        alias /sftp/uploads/;
+
+        autoindex on;
+
+    }
+
+}
+
+EOF
+
+      rm -rf /etc/nginx/sites-enabled/default
+      ln -s /etc/nginx/sites-available/sftp-files \
+      /etc/nginx/sites-enabled/
+      systemctl restart nginx
 
     SHELL
   end
