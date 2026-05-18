@@ -36,7 +36,7 @@ Esto permite mantener backends stateless detras del balanceador HAProxy.
 --------------------------------------------------------------------
 # Ejecución
 
-Para iniciar el entorno, Vagrant descargará y preparará una máquina Linux con Docker instalado.
+Para iniciar el entorno, Vagrant descargara y preparara una máquina Linux con Docker instalado.
 
 ```bash
 git clone https://github.com/Katar012/proyecto8-haproxy-datadog/
@@ -46,17 +46,24 @@ vagrant ssh lab
 cd /vagrant
 docker-compose up --build -d
 
+## TROUBLESHOOTING
+
 EN CASO TAL DE ERRORES POR ESTADO CORRUPTO:
 
 docker-compose down -v --remove-orphans
 docker-compose build --no-cache
 docker-compose up -d
 
-GENERALMENTE TRAS ESTO SE DEBERIA EJECUTAR EL SIGUIENTE COMANDO:
+SI LAS METRICAS DE CPU Y RAM NO SE MUESTRAN:
 
 docker-compose restart datadog
 
-LAS METRICAS DE CPU Y RAM NO SE MUESTRAN, en la parte derecha de la pagina, esta la pestaña de releases, la release anterior a la 4.0.0 funcionaba tras usar el comando anterior en caso tal de que no muestre nada de cpu o ram en el dashboard.
+SI TODAVIA NO SE MUESTRAN:
+
+exit
+vagrant destroy -f
+
+y volver a ejecutar desde vagrant up 
 
 ```
 ## Primera Parte: Cluster HAProxy con backends
