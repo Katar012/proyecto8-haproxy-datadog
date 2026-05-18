@@ -36,7 +36,7 @@ cd /vagrant
 docker-compose up --build -d
 ```
 
-## Primera Parte: Cluster HAProxy con backends
+## Primera Parte: Cluster HAProxy con backends.
 
 1. El estado de los backends se puede verificar desde el host en la [pagina de estadisticas de haproxy](http://192.168.65.10:8080) o la ip de la maquina http://192.168.65.10:8080.
 Tambien podemos verificar de manera extra en http://192.168.65.10:8081/metrics la respuesta de los backends.
