@@ -52,6 +52,12 @@ docker-compose down -v --remove-orphans
 docker-compose build --no-cache
 docker-compose up -d
 
+GENERALMENTE TRAS ESTO SE DEBERIA EJECUTAR EL SIGUIENTE COMANDO:
+
+docker-compose restart datadog
+
+LAS METRICAS DE CPU Y RAM NO SE MUESTRAN, en la parte derecha de la pagina, esta la pestaña de releases, la release anterior a la 4.0.0 funcionaba tras usar el comando anterior en caso tal de que no muestre nada de cpu o ram en el dashboard.
+
 ```
 ## Primera Parte: Cluster HAProxy con backends
 
@@ -90,7 +96,7 @@ Hemos creado diferentes escenarios de prueba en la carpeta `artillery/` para est
 - `soak.yml`: Prueba de larga duración (5 minutos) para validar estabilidad y consumo de RAM.
 - `mixed.yml`: 90% tráfico sano y 10% tráfico con errores (ideal para ver cómo se separan las gráficas de peticiones vs errores).
 
-Se ejecutan con el siguiente comando:
+Se ejecutan con el siguiente comando DESDE LA MAQUINA LAB:
 ```bash
 docker-compose run --rm artillery run latency.yml
 ```
@@ -134,8 +140,8 @@ Nginx hace lo siguiente:
 
 En caso tal de limpiar el entorno mal (o que el consumo de cpu y ram no aparezcan en el dashboard) se debe reiniciar datadog con el siguiente comando:
 
-```docker-compose restart datadog
-```
+```docker-compose restart datadog```
+MENCIONADO ARRIBA, PUEDE QUE NO FUNCIONE EN la version 4.0.0
 
 ### Alertas activas por el momento
 

@@ -62,6 +62,7 @@ services:
       - ./datadog/datadog.yaml:/etc/datadog-agent/datadog.yaml:ro
       - ./datadog/haproxy.d:/etc/datadog-agent/conf.d/haproxy.d:ro
       - haproxy_socket:/tmp/
+    user: "root" #AÑADIDO TRAS ERRORES PERSISTENTES CON DATOS QUE NO APARECEN EN EL DASHBOARD, NO CONDONO USAR ROOT EN NADA JAJAJAJ
     networks:
       - cluster_network
 
