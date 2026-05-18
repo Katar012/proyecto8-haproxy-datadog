@@ -13,15 +13,6 @@ graph TD;
     HAProxy-.->|Métricas UNIX Socket| Datadog;
     Datadog-->|Métricas y Logs JSON| DatadogCloud;
 ```
-
---------------------------------------------------------------------
-## Configuración de Datadog (API Key) (esto lo haces despues de hacer git clone y entrar a la maquina virtual)
-
-1. Ingresar a [Datadog](https://app.datadoghq.com/).
-2. En la barra de busqueda ingresar "API KEYS"
-3. En la raíz de este proyecto, abrir el archivo .env
-4. Pegar para que quede asi: `DD_API_KEY=tu_clave_aqui`
-
 --------------------------------------------------------------------
 # Ejecución
 
@@ -56,16 +47,20 @@ Este ciclo verificara que tenemos una respuesta adecuada de los 3 backends.
 ```{"backend":"web_back","server":"backend1","status":200}```
 
 ## Segunda Parte: Integración Datadog y Regiones
-Datadog tiene multiples regiones (ej: US1, US3, US5, EU). Es importante que la variable `DD_SITE` en el archivo `docker-compose.yml` coincida exactamente con la región de la cuenta donde se sacó la API KEY.
-Si la api es del sito region por defecto (US1), el site debe ser `datadoghq.com`.
-Con el correo institucional de la autonoma aveces varia a `us5.datadoghq.com`, es muy importante que DD_SITE apunte al sitio donde se creo la cuenta.
+NOTA: Datadog tiene multiples regiones (ej: US1, US3, US5, EU). Es importante que la variable `DD_SITE` en el archivo `docker-compose.yml` coincida exactamente con la región de la cuenta donde se sacó la API KEY. Si la api es del sito region por defecto (US1), el site debe ser `datadoghq.com`. Con el correo institucional de la autonoma aveces varia a `us5.datadoghq.com`, es muy importante que DD_SITE apunte al sitio donde se creo la cuenta. ¡POR FAVOR REVISAR docker-compose.yml!
+
+1. Ingresar a [Datadog](https://app.datadoghq.com/).
+2. En la barra de busqueda ingresar "API KEYS"
+3. En la raíz de este proyecto, abrir el archivo .env
+4. Pegar para que quede asi: `DD_API_KEY=tu_clave_aqui` hay un archivo .env.example en la raiz para visualizar como debe ir
+5. Recordar que abajo de `DD_API_KEY=tu_clave_aqui` esta `DD_SITE=datadoghq.com`, añadir sufijo "usX." acorde a X region de donde sale la llave API
 
 ## Tercera Parte: Generación de tráfico con Artillery
 Hemos creado diferentes escenarios de prueba en la carpeta `artillery/` para estresar el cluster y validar nuestras metricas:
 
 - `normal.yml`: Tráfico estándar.
 - `spike.yml`: Pico de tráfico repentino.
-- `errors.yml`: Dispara 100% de errores HTTP 500 (apunta al endpoint roto `/error`).
+- `errors400.yml y errors500.yml`: Dispara 100% de errores HTTP 500 o HTTP 400.
 - `latency.yml`: Dispara peticiones al endpoint `/slow` para simular lentitud y ver cómo se eleva la gráfica de latencia promedio.
 - `soak.yml`: Prueba de larga duración (5 minutos) para validar estabilidad y consumo de RAM.
 - `mixed.yml`: 90% tráfico sano y 10% tráfico con errores (ideal para ver cómo se separan las gráficas de peticiones vs errores).
