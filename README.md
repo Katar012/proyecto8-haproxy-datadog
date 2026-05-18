@@ -31,11 +31,11 @@ Para iniciar el entorno, Vagrant descargará y preparará una máquina Linux con
 git clone https://github.com/Katar012/proyecto8-haproxy-datadog/
 cd proyecto8-haproxy-datadog
 vagrant up
-vagrant ssh storage
-cd /sftp/uploads
+vagrant ssh lab
+cd /vagrant
+docker-compose build --no-cache
+docker-compose up -d
 ```
-En la carpeta sftp/uploads/ encontraremos los archivos que se subiran desde los contenedores en el frontend http://192.168.65.10:8081/
-
 ## Primera Parte: Cluster HAProxy con backends
 
 1. El estado de los backends se puede verificar desde el host en la [pagina de estadisticas de haproxy](http://192.168.65.10:8080) o la ip de la maquina http://192.168.65.10:8080.
@@ -73,7 +73,22 @@ Se cambia obviamente el nombre del archivo por el que se desee usar, en este cas
 
 ## Generacion de trafico con sftp
 Se creo una maquina virtual adicional que contiene un servicio sftp, la maquina se llama storage.
+```
+cd proyecto8-haproxy-datadog
+vagrant up
+vagrant ssh storage
+cd /sftp/uploads
+```
+En la carpeta sftp/uploads/ encontraremos los archivos que se subiran desde los contenedores en el [frontend](http://192.168.65.10:8081) con direccion a http://192.168.65.10:8081/
 
+Desde la maquina lab podemos verificar el acceso al servidor sftp de la maquina storage mediante el siguiente comando, la contraseña es 1234.
+```
+sftp sftpuser@192.168.65.20
+1234
+cd uploads
+ls
+```
+La subida y bajada de archivos sera directamente probada en el [frontend](http://192.168.65.10:8081) con direccion a http://192.168.65.10:8081/
 
 ## Prueba en Datadog
 
