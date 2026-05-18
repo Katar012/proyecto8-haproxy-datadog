@@ -1,10 +1,11 @@
 config:
-  target: "http://haproxy"
+  target: "http://haproxy:80"
   phases:
     - duration: 20
       arrivalRate: 10
 
 scenarios:
-  - flow:
+  - name: "Errores 500 de servidor"
+    flow:
       - get:
           url: "/error"

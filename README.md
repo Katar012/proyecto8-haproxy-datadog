@@ -15,7 +15,7 @@ graph TD;
 ```
 
 --------------------------------------------------------------------
-## Configuración de Datadog (API Key)
+## Configuración de Datadog (API Key) (esto lo haces despues de hacer git clone y entrar a la maquina virtual)
 
 1. Ingresar a [Datadog](https://app.datadoghq.com/).
 2. En la barra de busqueda ingresar "API KEYS"
@@ -34,38 +34,89 @@ vagrant up
 vagrant ssh lab
 cd /vagrant
 docker-compose up --build -d
+
+O SI NO ES PRIMERA VEZ:
+
+docker-compose build --no-cache
+docker-compose up -d
+
 ```
+## Primera Parte: Cluster HAProxy con backends
 
-## Primera Parte: Cluster HAProxy con backends.
-
-1. El estado de los backends se puede verificar desde el host en la [pagina de estadisticas de haproxy](http://192.168.65.10:8080) o la ip de la maquina http://192.168.65.10:8080.
+1. El estado de los backends se puede verificar desde el host en la [pagina de estadisticas de haproxy](http://192.168.65.10:8080/stats) o la ip de la maquina http://192.168.65.10:8080/stats.
 Tambien podemos verificar de manera extra en http://192.168.65.10:8081/metrics la respuesta de los backends.
 
-2. Luego verificamos en otra ventana de la misma maquina virtual "lab"
+3. Luego verificamos en otra ventana de la misma maquina virtual "lab"
 ```bash
-for i in {1..10}; do curl -s localhost:8081; done
+for i in {1..10}; do curl -s http://localhost:8081/health; echo ""; done
 ```
-Este ciclo verificara que tenemos un balance entre los 3 backends.
+Este ciclo verificara que tenemos una respuesta adecuada de los 3 backends.
 
-3. Con ```docker-compose logs haproxy``` podemos visualizar registros estructurados con la siguiente estructura como ejemplo:
+3. Con ```docker-compose logs haproxy``` podemos visualizar registros estructurados con la siguiente estructura por ejemplificar:
 ```{"backend":"web_back","server":"backend1","status":200}```
 
-Una vez todo este preparado, ingresar al [Dashboard](https://p.us5.datadoghq.com/sb/85988188-4804-11f1-bc34-5ef128fabc1b-9f9dd79c16fcbd4c9aabbd251896a864).
+## Segunda Parte: Integración Datadog y Regiones
+Datadog tiene multiples regiones (ej: US1, US3, US5, EU). Es importante que la variable `DD_SITE` en el archivo `docker-compose.yml` coincida exactamente con la región de la cuenta donde se sacó la API KEY.
+Si la api es del sito region por defecto (US1), el site debe ser `datadoghq.com`.
+Con el correo institucional de la autonoma aveces varia a `us5.datadoghq.com`, es muy importante que DD_SITE apunte al sitio donde se creo la cuenta.
 
-## Segunda Parte: Integracion Datadog
+## Tercera Parte: Generación de tráfico con Artillery
+Hemos creado diferentes escenarios de prueba en la carpeta `artillery/` para estresar el cluster y validar nuestras metricas:
 
-## Tercera Parte: Generación de tráfico y observabilidad
+- `normal.yml`: Tráfico estándar.
+- `spike.yml`: Pico de tráfico repentino.
+- `errors.yml`: Dispara 100% de errores HTTP 500 (apunta al endpoint roto `/error`).
+- `latency.yml`: Dispara peticiones al endpoint `/slow` para simular lentitud y ver cómo se eleva la gráfica de latencia promedio.
+- `soak.yml`: Prueba de larga duración (5 minutos) para validar estabilidad y consumo de RAM.
+- `mixed.yml`: 90% tráfico sano y 10% tráfico con errores (ideal para ver cómo se separan las gráficas de peticiones vs errores).
 
-<<<<<<< HEAD
-=======
-La generacion de trafico con artillery es muy sencilla, cada archivo de prueba esta guardado y configurado en la carpeta /artillery que se encuentra en la raiz del repositorio.
-Para crear una prueba especifica con creamos un archivo cualquiernombre.yml y configuramos dicho archivo con target hacia http://haproxy, las fases (duraciones y numero de clientes (arrivalRate)) pueden ser configuradas a gusto.
+Se ejecutan con el siguiente comando:
+```bash
+docker-compose run --rm artillery run latency.yml
+```
+Se cambia obviamente el nombre del archivo por el que se desee usar, en este caso se uso latency.yml.
 
-1. Anteriormente se ingreso ```docker-compose up --build -d```
-2. Detendremos el proceso artillery con ```docker-compose down artillery``` (NOTA PARA COLABORADORES: Esto puede evitarse con una configuracion despues)
-3. Luego corremos la prueba con ```docker compose run --rm artillery run cualquiernombre.yml```. Especificando el nombre del archivo yml creado anteriormente.
-4. En 1 minuto Datadog mostrara el trafico en el dashboard, NO SERA INSTANTANEO.
->>>>>>> dev
+## Generacion de trafico con sftp
+Se creo una maquina virtual adicional que contiene un servicio sftp, la maquina se llama storage.
+```
+cd proyecto8-haproxy-datadog
+vagrant up
+vagrant ssh storage
+cd /sftp/uploads
+```
+En la carpeta sftp/uploads/ encontraremos los archivos que se subiran desde los contenedores en el [frontend](http://192.168.65.10:8081) con direccion a http://192.168.65.10:8081/
+
+Desde la maquina lab podemos verificar el acceso al servidor sftp de la maquina storage mediante el siguiente comando, la contraseña es 1234.
+```
+sftp sftpuser@192.168.65.20
+1234
+cd uploads
+ls
+```
+La subida y bajada de archivos sera directamente probada en el [frontend](http://192.168.65.10:8081) con direccion a http://192.168.65.10:8081/
+
+## Prueba en Datadog
+
+1. Creacion de Dashboards (Uso de JSON)
+Para evitar configurar los gráficos a mano, Datadog permite importar widgets usando código JSON.
+En Datadog, se da click en new dashboard y añadimos widget usando la opcion json.
+
+### Alertas activas por el momento
+
+**Alerta 1: Tasa de Errores > 5%**
+1. Ve a **Monitors -> New Monitor -> Metric**.
+2. Elige la pestaña **Formula**.
+3. Letra `a`: `haproxy.backend.response.5xx{*}`
+4. Letra `b`: `haproxy.frontend.requests.rate{*}`
+5. Fórmula: `(a / b) * 100`
+6. En Set Alert Conditions pon **Above 5** y dale a Guardar.
+
+**Alerta 2: Backend Caído**
+1. Ve a **Monitors -> New Monitor -> Metric**.
+2. En métrica escribe `docker.cpu.usage`, from `image_name:vagrant_backend*`, avg by `image_name`.
+3. Datadog lo detectará como una "Multi Alert".
+4. Baja hasta encontrar la opción **"Notify if data is missing"** y pon que avise si no hay datos por más de 1 minuto.
+5. Usa `{{image_name.name}}` en el título para saber exactamente cuál de los 3 se apagó.
 --------------------------------------------------------------------
 # Integrantes
 

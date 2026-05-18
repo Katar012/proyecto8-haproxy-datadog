@@ -1,9 +1,9 @@
 config:
   target: "http://haproxy"
   phases:
-    - duration: 30
-      arrivalRate: 5
-      name: "Peticiones con tasa de llegada regular"
+    - duration: 300
+      arrivalRate: 15
+      name: "Carga sostenida de 5 minutos"
 
 scenarios:
   - flow:

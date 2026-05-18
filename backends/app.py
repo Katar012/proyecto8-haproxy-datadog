@@ -3,6 +3,7 @@ import os
 import socket
 import paramiko
 import tempfile
+import time
 
 app = Flask(__name__)
 
@@ -137,6 +138,10 @@ def files():
             "error": str(e)
         }), 500
 
+@app.route("/error")
+def error_endpoint():
+    return jsonify({"error": "Simulated"}), 500
+
 @app.route("/metrics")
 def metrics():
     return "requests_total 1\n"
@@ -147,5 +152,10 @@ def health():
         "status": "ok",
         "node": node_id
     })
+
+@app.route("/slow")
+def slow():
+    time.sleep(2)
+    return "Slow response\n"
 
 app.run(host="0.0.0.0", port=80)
