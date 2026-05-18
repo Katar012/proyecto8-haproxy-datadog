@@ -51,16 +51,12 @@ Este ciclo verificara que tenemos un balance entre los 3 backends.
 ```{"backend":"web_back","server":"backend1","status":200}```
 
 ## Segunda Parte: Integración Datadog y Regiones
-
-⚠️ **¡MUY IMPORTANTE - CUIDADO CON LA REGIÓN DE DATADOG!** ⚠️
-Datadog tiene múltiples regiones (ej: US1, US3, US5, EU). Es **vital** que la variable `DD_SITE` en el archivo `docker-compose.yml` coincida exactamente con la región de la cuenta donde se sacó la API KEY.
-- Si sacaste la API KEY en la región por defecto (US1), el site debe ser `datadoghq.com`.
-- Si usas un enlace de un compañero que está en US5 (`us5.datadoghq.com`), pero tu API Key es de US1, **los datos no van a aparecer en su dashboard**, se irán a tu cuenta en US1.
-¡Asegúrate de estar viendo el dashboard en la misma cuenta y región donde inyectaste la API Key!
+Datadog tiene multiples regiones (ej: US1, US3, US5, EU). Es importante que la variable `DD_SITE` en el archivo `docker-compose.yml` coincida exactamente con la región de la cuenta donde se sacó la API KEY.
+Si la api es del sito region por defecto (US1), el site debe ser `datadoghq.com`.
+Con el correo institucional de la autonoma aveces varia a `us5.datadoghq.com`, es muy importante que DD_SITE apunte al sitio donde se creo la cuenta.
 
 ## Tercera Parte: Generación de tráfico con Artillery
-
-Hemos creado diferentes escenarios de prueba en la carpeta `artillery/` para estresar el clúster y validar nuestras métricas:
+Hemos creado diferentes escenarios de prueba en la carpeta `artillery/` para estresar el cluster y validar nuestras metricas:
 
 - `normal.yml`: Tráfico estándar.
 - `spike.yml`: Pico de tráfico repentino.
@@ -69,50 +65,19 @@ Hemos creado diferentes escenarios de prueba en la carpeta `artillery/` para est
 - `soak.yml`: Prueba de larga duración (5 minutos) para validar estabilidad y consumo de RAM.
 - `mixed.yml`: 90% tráfico sano y 10% tráfico con errores (ideal para ver cómo se separan las gráficas de peticiones vs errores).
 
-**¿Cómo ejecutarlas?**
+Se ejecutan con el siguiente comando:
 ```bash
 docker-compose run --rm artillery run latency.yml
 ```
-*(Cambia `latency.yml` por el nombre de la prueba que quieras ejecutar. Recuerda esperar un par de minutos para que Datadog refleje los datos).*
+Se cambia obviamente el nombre del archivo por el que se desee usar, en este caso se uso latency.yml.
 
-## Cuarta Parte: Dashboards y Monitores (Paso a Paso)
+## Prueba en Datadog
 
-### 1. Creación de Dashboards (Uso de JSON)
+1. Creacion de Dashboards (Uso de JSON)
 Para evitar configurar los gráficos a mano, Datadog permite importar widgets usando código JSON.
-1. En Datadog, ve a **Dashboards -> New Dashboard**.
-2. Haz clic en **Add Widget** y busca la opción **JSON** o haz clic en un widget vacío y ve a la pestaña JSON.
-3. Para monitorear el número exacto de Backends Vivos, pega este JSON (que cuenta los contenedores Docker en ejecución):
-   ```json
-   {
-       "title": "Backends Activos",
-       "type": "query_value",
-       "requests": [
-           {
-               "response_format": "scalar",
-               "queries": [
-                   {
-                       "data_source": "metrics",
-                       "name": "query1",
-                       "query": "count_not_null(avg:docker.cpu.usage{image_name IN (vagrant_backend1, vagrant_backend2, vagrant_backend3)} by {image_name})"
-                   }
-               ],
-               "formulas": [ { "formula": "query1" } ],
-               "aggregator": "last"
-           }
-       ],
-       "autoscale": true,
-       "precision": 0
-   }
-   ```
-4. Haz lo mismo con el widget de tipo **Top List** pegando el código respectivo para ver el estado individual de consumo de cada contenedor.
+En Datadog, se da click en new dashboard y añadimos widget usando la opcion json.
 
-### 2. Creación de Alertas/Monitores
-Hemos configurado dos monitores críticos. Para que a tus compañeros se les haga más fácil crearlos, pueden importar la configuración exportada en formato JSON, o crearlos manualmente:
-
-**Opción A (Importar JSON):**
-Datadog permite exportar e importar monitores a través de la API o herramientas de IaC, pero en la interfaz web también puedes clonar monitores si les pasas el JSON. Esa es la razón de ser de los bloques JSON que Datadog genera: facilitarle a los equipos copiar alertas entre cuentas.
-
-**Opción B (Manual paso a paso):**
+### Alertas activas por el momento
 
 **Alerta 1: Tasa de Errores > 5%**
 1. Ve a **Monitors -> New Monitor -> Metric**.
