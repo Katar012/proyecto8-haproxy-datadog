@@ -1,0 +1,6 @@
+Match User sftpuser
+    ChrootDirectory /sftp
+    ForceCommand internal-sftp
+    PasswordAuthentication yes
+    AllowTcpForwarding no
+    X11Forwarding no
