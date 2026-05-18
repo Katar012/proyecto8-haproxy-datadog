@@ -170,7 +170,7 @@ MENCIONADO ARRIBA, PUEDE QUE NO FUNCIONE EN la version 4.0.0
 5. Usa `{{image_name.name}}` en el título para saber exactamente cuál de los 3 se apagó.
 --------------------------------------------------------------------
 # Informe
-Enlace a informe: https://docs.google.com/document/d/1qb9W9gCYmazZALAtgiCaq1qKk_oygViP/edit?usp=sharing&ouid=106756143487291349925&rtpof=true&sd=true
+Enlace a informe: https://docs.google.com/document/d/1qNurVDZVrGHfbW0Bk0QBBpq3cDIE8CC2/edit?usp=sharing&ouid=106756143487291349925&rtpof=true&sd=true
 --------------------------------------------------------------------
 # Integrantes
 
