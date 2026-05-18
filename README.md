@@ -42,6 +42,7 @@ Para iniciar el entorno, Vagrant descargara y preparara una máquina Linux con D
 git clone https://github.com/Katar012/proyecto8-haproxy-datadog/
 cd proyecto8-haproxy-datadog
 vagrant up
+vagrant provision storage
 vagrant ssh lab
 cd /vagrant
 docker-compose up --build -d
@@ -85,13 +86,14 @@ NOTA: Datadog tiene multiples regiones (ej: US1, US3, US5, EU). Es importante qu
 2. En la barra de busqueda ingresar "API KEYS"
 3. En la raíz de este proyecto, abrir el archivo .env
 4. Pegar para que quede asi: `DD_API_KEY=tu_clave_aqui` hay un archivo .env.example en la raiz para visualizar como debe ir
-5. Recordar que abajo de `DD_API_KEY=tu_clave_aqui` esta `DD_SITE=datadoghq.com`, añadir sufijo "usX." acorde a X region de donde sale la llave API
+5. Recordar: en el archivo docker-compose.yml, abajo de `DD_API_KEY=tu_clave_aqui` esta `DD_SITE=datadoghq.com`, añadir sufijo "usX." acorde a X region de donde sale la llave API
 
 ### Prueba en Datadog
 
 1. Creacion de Dashboards (Uso de Dashboard.json en la raiz del proyecto)
 Para evitar configurar los graficos a mano, Datadog permite importar widgets usando codigo JSON.
-En Datadog, se da click en new dashboard y e importamos nuestro archivo Dashboard.json
+
+2. En Datadog, se da click en new dashboard y e importamos nuestro archivo Dashboard.json
 
 ## Tercera Parte: Generación de tráfico con Artillery
 Hemos creado diferentes escenarios de prueba en la carpeta `artillery/` para estresar el cluster y validar nuestras metricas:
