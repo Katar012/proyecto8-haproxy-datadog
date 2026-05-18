@@ -43,9 +43,9 @@ Tambien podemos verificar de manera extra en http://192.168.65.10:8081/metrics l
 
 2. Luego verificamos en otra ventana de la misma maquina virtual "lab"
 ```bash
-for i in {1..10}; do curl -s localhost:8081; done
+for i in {1..10}; do curl -s http://localhost:8081/health; echo ""; done
 ```
-Este ciclo verificara que tenemos un balance entre los 3 backends.
+Este ciclo verificara que tenemos una respuesta adecuada de los 3 backends.
 
 3. Con ```docker-compose logs haproxy``` podemos visualizar registros estructurados con la siguiente estructura como ejemplo:
 ```{"backend":"web_back","server":"backend1","status":200}```
