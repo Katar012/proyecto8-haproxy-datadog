@@ -88,12 +88,13 @@ NOTA: Datadog tiene multiples regiones (ej: US1, US3, US5, EU). Es importante qu
 4. Pegar para que quede asi: `DD_API_KEY=tu_clave_aqui` hay un archivo .env.example en la raiz para visualizar como debe ir
 5. Recordar: en el archivo docker-compose.yml, abajo de `DD_API_KEY=tu_clave_aqui` esta `DD_SITE=datadoghq.com`, añadir sufijo "usX." acorde a X region de donde sale la llave API
 
-### Prueba en Datadog
+### 1. Creación de Dashboards (Uso de JSON)
+Para evitar configurar los gráficos a mano, Datadog permite importar dashboards y widgets usando código JSON.
 
-1. Creacion de Dashboards (Uso de Dashboard.json en la raiz del proyecto)
-Para evitar configurar los graficos a mano, Datadog permite importar widgets usando codigo JSON.
-
-2. En Datadog, se da click en new dashboard y e importamos nuestro archivo Dashboard.json
+Hemos exportado el Dashboard completo para que lo puedas clonar con un solo clic. El código se encuentra en el archivo `datadog_exports/dashboard.json`.
+1. En Datadog, ve a **Dashboards -> New Dashboard**.
+2. Dale al botón de configuración (ruedita) o busca la opción **Import Dashboard JSON**.
+3. Pega todo el contenido del archivo `datadog_exports/dashboard.json`.
 
 ## Tercera Parte: Generación de tráfico con Artillery
 Hemos creado diferentes escenarios de prueba en la carpeta `artillery/` para estresar el cluster y validar nuestras metricas:
@@ -158,7 +159,15 @@ En caso tal de limpiar el entorno mal (o que el consumo de cpu y ram no aparezca
 ```docker-compose restart datadog```
 MENCIONADO ARRIBA, PUEDE QUE NO FUNCIONE EN la version 4.0.0
 
-### Alertas activas por el momento
+### 2. Creación de Alertas/Monitores
+Hemos configurado dos monitores críticos. Para que a tus compañeros se les haga más fácil crearlos, pueden importar la configuración exportada en formato JSON, o crearlos manualmente:
+
+**Opción A (Importar JSON):**
+Hemos guardado los JSON listos para importar en la carpeta `datadog_exports`. Simplemente cópialos en Datadog:
+1. `datadog_exports/monitor_errores.json`: Te alertará si la tasa de errores HTTP 500 supera el 5%.
+2. `datadog_exports/monitor_backend_caido.json`: Te alertará e indicará el nombre exacto de cuál de los servidores se apagó.
+
+**Opción B (Manual paso a paso):**
 
 **Alerta 1: Tasa de Errores > 5%**
 1. Ve a **Monitors -> New Monitor -> Metric**.
