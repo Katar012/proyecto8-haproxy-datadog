@@ -31,23 +31,23 @@ Para iniciar el entorno, Vagrant descargará y preparará una máquina Linux con
 git clone https://github.com/Katar012/proyecto8-haproxy-datadog/
 cd proyecto8-haproxy-datadog
 vagrant up
-vagrant ssh lab
-cd /vagrant
-docker-compose up --build -d
+vagrant ssh storage
+cd /sftp/uploads
 ```
+En la carpeta sftp/uploads/ encontraremos los archivos que se subiran desde los contenedores en el frontend http://192.168.65.10:8081/
 
 ## Primera Parte: Cluster HAProxy con backends
 
 1. El estado de los backends se puede verificar desde el host en la [pagina de estadisticas de haproxy](http://192.168.65.10:8080) o la ip de la maquina http://192.168.65.10:8080.
 Tambien podemos verificar de manera extra en http://192.168.65.10:8081/metrics la respuesta de los backends.
 
-2. Luego verificamos en otra ventana de la misma maquina virtual "lab"
+3. Luego verificamos en otra ventana de la misma maquina virtual "lab"
 ```bash
 for i in {1..10}; do curl -s http://localhost:8081/health; echo ""; done
 ```
 Este ciclo verificara que tenemos una respuesta adecuada de los 3 backends.
 
-3. Con ```docker-compose logs haproxy``` podemos visualizar registros estructurados con la siguiente estructura como ejemplo:
+3. Con ```docker-compose logs haproxy``` podemos visualizar registros estructurados con la siguiente estructura por ejemplificar:
 ```{"backend":"web_back","server":"backend1","status":200}```
 
 ## Segunda Parte: Integración Datadog y Regiones
@@ -70,6 +70,10 @@ Se ejecutan con el siguiente comando:
 docker-compose run --rm artillery run latency.yml
 ```
 Se cambia obviamente el nombre del archivo por el que se desee usar, en este caso se uso latency.yml.
+
+## Generacion de trafico con sftp
+Se creo una maquina virtual adicional que contiene un servicio sftp, la maquina se llama storage.
+
 
 ## Prueba en Datadog
 
