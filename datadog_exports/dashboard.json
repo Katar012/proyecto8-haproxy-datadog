@@ -5,7 +5,7 @@
     {
       "id": 2356582581061440,
       "definition": {
-        "title": "Request por segundo",
+        "title": "Request por segundo (Global)",
         "title_size": "16",
         "title_align": "left",
         "show_legend": true,
@@ -39,7 +39,7 @@
     {
       "id": 4846010404939253,
       "definition": {
-        "title": "latencia promedio",
+        "title": "Latencia Promedio por Servidor",
         "title_size": "16",
         "title_align": "left",
         "show_legend": true,
@@ -54,7 +54,7 @@
               {
                 "data_source": "metrics",
                 "name": "query1",
-                "query": "avg:haproxy.backend.response.time{*}"
+                "query": "avg:haproxy.backend.response.time{*} by {server}"
               }
             ],
             "formulas": [{ "formula": "query1" }],
@@ -73,7 +73,7 @@
     {
       "id": 3601135114161064,
       "definition": {
-        "title": "Tasa de Errores",
+        "title": "Tasa de Errores por Servidor",
         "title_size": "16",
         "title_align": "left",
         "show_legend": true,
@@ -88,10 +88,15 @@
               {
                 "data_source": "metrics",
                 "name": "query1",
-                "query": "avg:haproxy.backend.response.5xx{*}"
+                "query": "avg:haproxy.backend.response.5xx{*} by {server}"
+              },
+              {
+                "data_source": "metrics",
+                "name": "query2",
+                "query": "avg:haproxy.backend.response.4xx{*} by {server}"
               }
             ],
-            "formulas": [{ "formula": "query1" }],
+            "formulas": [{ "formula": "query1" }, { "formula": "query2" }],
             "style": {
               "palette": "semantic",
               "order_by": "values",
@@ -121,7 +126,7 @@
               {
                 "data_source": "metrics",
                 "name": "query1",
-                "query": "avg:docker.mem.rss{*} by {container_name}"
+                "query": "avg:container.memory.usage{*} by {container_name}"
               }
             ],
             "style": {
@@ -149,7 +154,7 @@
               {
                 "data_source": "metrics",
                 "name": "query1",
-                "query": "avg:docker.cpu.usage{image_name IN (vagrant_backend1, vagrant_backend2, vagrant_backend3)} by {image_name}"
+                "query": "avg:docker.containers.running{image_name IN (vagrant_backend1, vagrant_backend2, vagrant_backend3)} by {image_name}"
               }
             ],
             "response_format": "scalar",
@@ -176,7 +181,7 @@
               {
                 "data_source": "metrics",
                 "name": "query1",
-                "query": "avg:docker.cpu.usage{*} by {container_name}"
+                "query": "avg:container.cpu.usage{*} by {container_name}"
               }
             ],
             "style": {
@@ -189,6 +194,39 @@
         ]
       },
       "layout": { "x": 6, "y": 2, "width": 4, "height": 2 }
+    },
+    {
+      "id": 516973049797610,
+      "definition": {
+        "title": "Conexiones por segundo por Servidor",
+        "title_size": "16",
+        "title_align": "left",
+        "show_legend": true,
+        "legend_layout": "auto",
+        "legend_columns": ["avg", "min", "max", "value", "sum"],
+        "type": "timeseries",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "query1",
+                "query": "avg:haproxy.backend.session.rate{*} by {server}"
+              }
+            ],
+            "formulas": [{ "formula": "query1" }],
+            "style": {
+              "palette": "dog_classic",
+              "order_by": "values",
+              "line_type": "solid",
+              "line_width": "normal"
+            },
+            "display_type": "line"
+          }
+        ]
+      },
+      "layout": { "x": 0, "y": 4, "width": 4, "height": 2 }
     }
   ],
   "template_variables": [],
