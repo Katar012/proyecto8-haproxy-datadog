@@ -1,9 +1,9 @@
 {
   "id": 284898324,
-  "name": "[Crítico] El servidor {{image_name.name}} se ha caído",
+  "name": "[Crítico] El servidor {{backend.name}} se ha caído",
   "type": "query alert",
-  "query": "avg(last_5m): avg:docker.containers.running{image_name IN (vagrant_backend1, vagrant_backend2, vagrant_backend3)} by {image_name} < 1",
-  "message": "{{#is_alert}}\r\nALERTA: Uno o más backends del clúster HAProxy dejaron de responder o presentan actividad anormalmente baja.\r\n\r\nBackend afectado:\r\n{{container_name.name}}\r\n\r\nPosibles causas:\r\n- contenedor detenido\r\n- fallo de aplicación\r\n- problema de red\r\n- saturación del servicio\r\n\r\nSe recomienda verificar:\r\n- estado del contenedor Docker\r\n- logs del backend\r\n- métricas de HAProxy\r\n- distribución de tráfico\r\n{{/is_alert}}\r\n\r\n{{#is_recovery}}\r\nRECUPERACIÓN: El backend {{container_name.name}} volvió a operar normalmente.\r\n{{/is_recovery}}\r\n\r\n{{#is_no_data}}\r\nALERTA (SIN DATOS): El contenedor {{container_name.name}} está caído o no envía telemetría. Revisa si el contenedor está corriendo.\r\n{{/is_no_data}}\r\nNotify:@alejandro_rod.c@uao.edu.co",
+  "query": "avg(last_1m):avg:haproxy.count_per_status{status:up, haproxy_service:web_back} by {backend} < 1",
+  "message": "{{#is_alert}}\r\nALERTA: Uno o más backends del clúster HAProxy dejaron de responder o presentan actividad anormalmente baja.\r\n\r\nBackend afectado:\r\n{{backend.name}}\r\n\r\nPosibles causas:\r\n- contenedor detenido\r\n- fallo de aplicación\r\n- problema de red\r\n- saturación del servicio\r\n\r\nSe recomienda verificar:\r\n- estado del contenedor Docker\r\n- logs del backend\r\n- métricas de HAProxy\r\n- distribución de tráfico\r\n{{/is_alert}}\r\n\r\n{{#is_recovery}}\r\nRECUPERACIÓN: El backend {{backend.name}} volvió a operar normalmente.\r\n{{/is_recovery}}\r\n\r\n{{#is_no_data}}\r\nALERTA (SIN DATOS): El contenedor {{backend.name}} está caído o no envía telemetría. Revisa si el contenedor está corriendo.\r\n{{/is_no_data}}\r\nNotify:@alejandro_rod.c@uao.edu.co",
   "tags": [],
   "options": {
     "thresholds": {

@@ -229,7 +229,7 @@
               {
                 "data_source": "metrics",
                 "name": "query1",
-                "query": "avg:docker.containers.running{image_name IN (vagrant_backend1, vagrant_backend2, vagrant_backend3)} by {image_name}"
+                "query": "avg:haproxy.count_per_status{status:up, haproxy_service:web_back} by {backend}"
               }
             ],
             "response_format": "scalar",

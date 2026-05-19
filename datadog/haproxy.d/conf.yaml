@@ -2,3 +2,8 @@ init_config:
 
 instances:
   - url: "unix:///tmp/haproxy.sock"
+    enable_service_check: true
+    collect_status_metrics: true
+    collect_status_metrics_by_host: true
+    collect_aggregates_only: both
+
