@@ -24,69 +24,49 @@ graph TD;
 ```
 ```mermaid
 graph TD
+    %% Infraestructura
+    Vagrant[Vagrantfile] -->|Provisiona| VM_LAB[VM LAB - 192.168.56.10]
+    Vagrant -->|Provisiona| VM_STORAGE[VM STORAGE - 192.168.56.20]
 
-    A[Vagrantfile]
-
-    A -->|Provisiona VM| LAB["VM lab - 192.168.56.10"]
-    A -->|Provisiona VM| STORAGE["VM storage - 192.168.56.20"]
-
-    subgraph LAB_VM ["Máquina Virtual LAB"]
-
-        Docker["Docker & Docker Compose"]
-
-        Docker --> HAProxy["HAProxy 2.6"]
-
-        Docker --> B1["Backend1 Flask"]
-        Docker --> B2["Backend2 Flask"]
-        Docker --> B3["Backend3 Flask"]
-
-        Docker --> DD["Datadog Agent"]
-
-        Docker --> ART["Artillery"]
-
-        User["Usuario / Frontend"] -->|HTTP :8081| HAProxy
-
-        HAProxy -->|Round Robin| B1
-        HAProxy -->|Round Robin| B2
-        HAProxy -->|Round Robin| B3
-
-        B1 -->|Upload SFTP| STORAGE
-        B2 -->|Upload SFTP| STORAGE
-        B3 -->|Upload SFTP| STORAGE
-
-        ART -->|Carga HTTP| HAProxy
-
-        HAProxy -.->|Socket UNIX| DD
-
-        DD -->|Logs y Métricas| DatadogCloud["Datadog Cloud"]
-
+    subgraph VM_LAB_VM [Máquina Virtual LAB]
+        HAProxy[HAProxy 2.6]
+        B1[Backend1 Flask]
+        B2[Backend2 Flask]
+        B3[Backend3 Flask]
+        DD[Datadog Agent]
+        ART[Artillery]
     end
 
-    subgraph STORAGE_VM ["Máquina Virtual STORAGE"]
-
-        SSH["OpenSSH SFTP Server"]
-
-        NGINX["NGINX"]
-
-        Files["Directorio uploads"]
-
+    subgraph VM_STORAGE_VM [Máquina Virtual STORAGE]
+        SSH[OpenSSH SFTP Server]
+        NGINX[NGINX]
+        Files[Directorio uploads]
+        
         SSH --> Files
-
         NGINX -->|Alias /files/| Files
-
     end
 
+    %% Flujos de entrada
+    User[Usuario / Frontend] -->|HTTP :8081| HAProxy
+    ART -->|Carga HTTP| HAProxy
+
+    %% Balanceo
+    HAProxy -->|Round Robin| B1
+    HAProxy -->|Round Robin| B2
+    HAProxy -->|Round Robin| B3
+
+    %% Almacenamiento
+    B1 -->|Upload SFTP| SSH
+    B2 -->|Upload SFTP| SSH
+    B3 -->|Upload SFTP| SSH
+
+    %% Descarga
     User -->|Download Files| NGINX
+
+    %% Monitoreo
+    HAProxy -.->|Socket UNIX| DD
+    DD -->|Logs y Métricas| DatadogCloud[Datadog Cloud]
 ```
-## Arquitectura stateless
-
-Los contenedores backend Flask no almacenan archivos localmente.
-
-Toda persistencia se delega a la máquina storage mediante:
-- SFTP para uploads
-- Nginx para distribución de archivos
-
-Esto permite mantener backends stateless detras del balanceador HAProxy.
 
 --------------------------------------------------------------------
 # Ejecución
