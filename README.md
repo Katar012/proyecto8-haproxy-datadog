@@ -69,7 +69,7 @@ y volver a ejecutar desde vagrant up
 ```
 ## Primera Parte: Cluster HAProxy con backends
 
-1. El estado de los backends se puede verificar desde el host en la [pagina de estadisticas de haproxy](http://192.168.65.10:8080/stats) o la ip de la maquina http://192.168.65.10:8080/stats.
+1. El estado de los backends se puede verificar desde el host en la [pagina de estadisticas de haproxy](http://192.168.56.10:8080/stats) o la ip de la maquina http://192.168.56.10:8080/stats.
 
 3. Luego verificamos en otra ventana de la misma maquina virtual "lab" el roundrobin con este comando:
 ```bash
@@ -127,16 +127,16 @@ vagrant provision storage
 vagrant ssh storage
 cd /sftp/uploads
 ```
-En la carpeta sftp/uploads/ encontraremos los archivos que se subiran desde los contenedores en el [frontend](http://192.168.65.10:8081) con direccion a http://192.168.65.10:8081/
+En la carpeta sftp/uploads/ encontraremos los archivos que se subiran desde los contenedores en el [frontend](http://192.168.56.10:8081) con direccion a http://192.168.56.10:8081/
 
 Desde la maquina lab podemos verificar el acceso al servidor sftp de la maquina storage mediante el siguiente comando, la contraseña es 1234.
 ```
-sftp sftpuser@192.168.65.20
+sftp sftpuser@192.168.56.20
 1234
 cd uploads
 ls
 ```
-La subida de archivos se realiza desde el Flask [frontend](http://192.168.65.10:8081) con direccion a http://192.168.65.10:8081/
+La subida de archivos se realiza desde el Flask [frontend](http://192.168.56.10:8081) con direccion a http://192.168.56.10:8081/
 
 Y la descarga de archivos es servida directamente por Nginx desde la maquina storage (En version 4.0.0 hacia adelante)
 
@@ -144,7 +144,7 @@ NOTA: Anteriormente en la version 3.2.0 Flask se encargaba de la carga y descarg
 
 ## Implementacion de Nginx
 Para relegar a flask unicamente a la logica de los backends y la subida de archivos, utilizamos Nginx con la finalidad de aliviar la descarga de archivos, evitando asi tener que ocupar de un timeout mas largo para que flask termine de procesar la solicitud de descarga exitosamente.
-
+.
 Flask queda unicamente encargado de:
 - Logica backend
 - Subida de archivos via sftp
@@ -152,7 +152,7 @@ Flask queda unicamente encargado de:
 Nginx hace lo siguiente:
 - Maneja descargas http
 - Reduce la carga sobre los backends Flask
-- Y ademas tenemos un nuevo [endpoint](http://192.168.65.20/files/) en http://192.168.65.20/files/ con tamaños de archivos y timestamps
+- Y ademas tenemos un nuevo [endpoint](http://192.168.56.20/files/) en http://192.168.56.20/files/ con tamaños de archivos y timestamps
 
 En caso tal de limpiar el entorno mal (o que el consumo de cpu y ram no aparezcan en el dashboard) se debe reiniciar datadog con el siguiente comando:
 
