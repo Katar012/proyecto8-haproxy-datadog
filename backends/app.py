@@ -11,7 +11,7 @@ UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 node_id = os.getenv("NODE_ID", socket.gethostname())
-SFTP_HOST = "192.168.65.20"
+SFTP_HOST = "192.168.56.20"
 SFTP_PORT = 22
 
 SFTP_USER = "sftpuser"
@@ -141,7 +141,7 @@ def files():
 @app.route("/delete/<filename>", methods=["POST"])
 def delete_file(filename):
 
-    transport = paramiko.Transport(("192.168.65.20", 22))
+    transport = paramiko.Transport(("192.168.56.20", 22))
     transport.connect(username="sftpuser", password="1234")
 
     sftp = paramiko.SFTPClient.from_transport(transport)
