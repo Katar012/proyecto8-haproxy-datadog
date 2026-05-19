@@ -1,0 +1,20 @@
+{
+	"id": 284031861,
+	"name": "[Alerta] Tasa de Errores de HAProxy SUPERÓ el 5%",
+	"type": "query alert",
+	"query": "avg(last_5m):(avg:haproxy.backend.response.5xx{*} / avg:haproxy.frontend.requests.rate{*}) * 100 > 5",
+	"message": "{{#is_alert}}\r\nALERTA: La tasa de errores HTTP 5xx en HAProxy superó el umbral permitido del 5%.\r\n\r\nEsto puede indicar:\r\n- caída de uno o más backends\r\n- saturación del clúster\r\n- fallos internos de la aplicación\r\n- problemas de conectividad\r\n\r\nSe recomienda revisar:\r\n- estado de los contenedores backend\r\n- métricas de latencia\r\n- logs de HAProxy en Datadog\r\n- distribución de tráfico del balanceador\r\n{{/is_alert}}\r\n\r\n{{#is_recovery}}\r\nRECUPERACIÓN: La tasa de errores HTTP en HAProxy volvió a niveles normales.\r\n{{/is_recovery}}\r\nNotify:@alejandro_rod.c@uao.edu.co",
+	"tags": [],
+	"options": {
+		"thresholds": {
+			"critical": 5
+		},
+		"notify_audit": true,
+		"on_missing_data": "default",
+		"include_tags": false,
+		"new_host_delay": 300
+	},
+	"priority": null,
+	"draft_status": "published",
+	"assets": []
+}

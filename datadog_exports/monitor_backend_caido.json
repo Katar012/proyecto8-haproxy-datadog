@@ -1,0 +1,20 @@
+{
+	"id": 284034726,
+	"name": "[Crítico] El servidor {{image_name.name}} se ha caído",
+	"type": "query alert",
+	"query": "avg(last_5m):avg:docker.cpu.usage{image_name:vagrant_backend*} by {container_name} == 0",
+	"message": "{{#is_alert}}\r\nALERTA: Uno o más backends del clúster HAProxy dejaron de responder o presentan actividad anormalmente baja.\r\n\r\nBackend afectado:\r\n{{container_name.name}}\r\n\r\nPosibles causas:\r\n- contenedor detenido\r\n- fallo de aplicación\r\n- problema de red\r\n- saturación del servicio\r\n\r\nSe recomienda verificar:\r\n- estado del contenedor Docker\r\n- logs del backend\r\n- métricas de HAProxy\r\n- distribución de tráfico\r\n{{/is_alert}}\r\n\r\n{{#is_recovery}}\r\nRECUPERACIÓN: El backend {{container_name.name}} volvió a operar normalmente.\r\n{{/is_recovery}}\r\nNotify:@alejandro_rod.c@uao.edu.co",
+	"tags": [],
+	"options": {
+		"thresholds": {
+			"critical": 0
+		},
+		"notify_audit": false,
+		"on_missing_data": "default",
+		"include_tags": true,
+		"new_group_delay": 60
+	},
+	"priority": null,
+	"draft_status": "published",
+	"assets": []
+}

@@ -1,0 +1,199 @@
+{
+  "title": "Dashboard para Telemáticos",
+  "description": "[[suggested_dashboards]]",
+  "widgets": [
+    {
+      "id": 2356582581061440,
+      "definition": {
+        "title": "Request por segundo",
+        "title_size": "16",
+        "title_align": "left",
+        "show_legend": true,
+        "legend_layout": "auto",
+        "legend_columns": ["avg", "min", "max", "value", "sum"],
+        "time": { "type": "live", "unit": "minute", "value": 5 },
+        "type": "timeseries",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "query1",
+                "query": "avg:haproxy.frontend.requests.rate{*}"
+              }
+            ],
+            "formulas": [{ "formula": "query1" }],
+            "style": {
+              "palette": "dog_classic",
+              "order_by": "values",
+              "line_type": "solid",
+              "line_width": "normal"
+            },
+            "display_type": "line"
+          }
+        ]
+      },
+      "layout": { "x": 0, "y": 0, "width": 4, "height": 2 }
+    },
+    {
+      "id": 4846010404939253,
+      "definition": {
+        "title": "latencia promedio",
+        "title_size": "16",
+        "title_align": "left",
+        "show_legend": true,
+        "legend_layout": "auto",
+        "legend_columns": ["avg", "min", "max", "value", "sum"],
+        "time": { "type": "live", "unit": "minute", "value": 5 },
+        "type": "timeseries",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "query1",
+                "query": "avg:haproxy.backend.response.time{*}"
+              }
+            ],
+            "formulas": [{ "formula": "query1" }],
+            "style": {
+              "palette": "dog_classic",
+              "order_by": "values",
+              "line_type": "solid",
+              "line_width": "normal"
+            },
+            "display_type": "line"
+          }
+        ]
+      },
+      "layout": { "x": 4, "y": 0, "width": 4, "height": 2 }
+    },
+    {
+      "id": 3601135114161064,
+      "definition": {
+        "title": "Tasa de Errores",
+        "title_size": "16",
+        "title_align": "left",
+        "show_legend": true,
+        "legend_layout": "auto",
+        "legend_columns": ["avg", "min", "max", "value", "sum"],
+        "time": { "type": "live", "unit": "minute", "value": 5 },
+        "type": "timeseries",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "query1",
+                "query": "avg:haproxy.backend.response.5xx{*}"
+              }
+            ],
+            "formulas": [{ "formula": "query1" }],
+            "style": {
+              "palette": "semantic",
+              "order_by": "values",
+              "line_type": "solid",
+              "line_width": "normal"
+            },
+            "display_type": "line"
+          }
+        ]
+      },
+      "layout": { "x": 8, "y": 0, "width": 4, "height": 2 }
+    },
+    {
+      "id": 6061070626269423,
+      "definition": {
+        "title": "Consumo de RAM por Contenedor",
+        "title_size": "16",
+        "title_align": "left",
+        "show_legend": true,
+        "legend_layout": "auto",
+        "legend_columns": ["avg", "min", "max", "value", "sum"],
+        "type": "timeseries",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "query1",
+                "query": "avg:docker.mem.rss{*} by {container_name}"
+              }
+            ],
+            "style": {
+              "palette": "cool",
+              "line_type": "solid",
+              "line_width": "normal"
+            },
+            "display_type": "line"
+          }
+        ]
+      },
+      "layout": { "x": 0, "y": 2, "width": 4, "height": 2 }
+    },
+    {
+      "id": 6191133729479831,
+      "definition": {
+        "title": "Estado Individual de Backends",
+        "title_size": "16",
+        "title_align": "left",
+        "time": { "type": "live", "unit": "minute", "value": 1 },
+        "type": "toplist",
+        "requests": [
+          {
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "query1",
+                "query": "avg:docker.cpu.usage{image_name IN (vagrant_backend1, vagrant_backend2, vagrant_backend3)} by {image_name}"
+              }
+            ],
+            "response_format": "scalar",
+            "formulas": [{ "formula": "query1" }]
+          }
+        ]
+      },
+      "layout": { "x": 4, "y": 2, "width": 2, "height": 2 }
+    },
+    {
+      "id": 5759559728887079,
+      "definition": {
+        "title": "Uso de CPU por Contenedor",
+        "title_size": "16",
+        "title_align": "left",
+        "show_legend": true,
+        "legend_layout": "auto",
+        "legend_columns": ["avg", "min", "max", "value", "sum"],
+        "type": "timeseries",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "query1",
+                "query": "avg:docker.cpu.usage{*} by {container_name}"
+              }
+            ],
+            "style": {
+              "palette": "dog_classic",
+              "line_type": "solid",
+              "line_width": "normal"
+            },
+            "display_type": "line"
+          }
+        ]
+      },
+      "layout": { "x": 6, "y": 2, "width": 4, "height": 2 }
+    }
+  ],
+  "template_variables": [],
+  "layout_type": "ordered",
+  "notify_list": [],
+  "pause_auto_refresh": false,
+  "reflow_type": "fixed"
+}
