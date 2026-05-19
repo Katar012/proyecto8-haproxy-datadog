@@ -22,7 +22,62 @@ graph TD;
     HAProxy -.->|Metrics Socket| Datadog
     Datadog -->|Metrics & Logs| DatadogCloud
 ```
+```mermaid
+graph TD
 
+    A[Vagrantfile]
+
+    A -->|Provisiona VM| LAB["VM lab - 192.168.56.10"]
+    A -->|Provisiona VM| STORAGE["VM storage - 192.168.56.20"]
+
+    subgraph LAB_VM ["Máquina Virtual LAB"]
+
+        Docker["Docker & Docker Compose"]
+
+        Docker --> HAProxy["HAProxy 2.6"]
+
+        Docker --> B1["Backend1 Flask"]
+        Docker --> B2["Backend2 Flask"]
+        Docker --> B3["Backend3 Flask"]
+
+        Docker --> DD["Datadog Agent"]
+
+        Docker --> ART["Artillery"]
+
+        User["Usuario / Frontend"] -->|HTTP :8081| HAProxy
+
+        HAProxy -->|Round Robin| B1
+        HAProxy -->|Round Robin| B2
+        HAProxy -->|Round Robin| B3
+
+        B1 -->|Upload SFTP| STORAGE
+        B2 -->|Upload SFTP| STORAGE
+        B3 -->|Upload SFTP| STORAGE
+
+        ART -->|Carga HTTP| HAProxy
+
+        HAProxy -.->|Socket UNIX| DD
+
+        DD -->|Logs y Métricas| DatadogCloud["Datadog Cloud"]
+
+    end
+
+    subgraph STORAGE_VM ["Máquina Virtual STORAGE"]
+
+        SSH["OpenSSH SFTP Server"]
+
+        NGINX["NGINX"]
+
+        Files["Directorio uploads"]
+
+        SSH --> Files
+
+        NGINX -->|Alias /files/| Files
+
+    end
+
+    User -->|Download Files| NGINX
+```
 ## Arquitectura stateless
 
 Los contenedores backend Flask no almacenan archivos localmente.
@@ -204,7 +259,8 @@ Disparar alertas configuradas en Datadog, por ejemplo, apagar un backend con ```
 Para volver a levantarlos se debe hacer ```docker-compose start backend1 backend2``` y luego reiniciamos el contenedor de haproxy con ```docker-compose restart haproxy```
 --------------------------------------------------------------------
 # Informe
-Enlace a informe: https://docs.google.com/document/d/1LwtuTcqxJYRZ5sKOAE9KDB0WlzXiwcqI/edit?usp=sharing&ouid=106756143487291349925&rtpof=true&sd=true
+Enlace a informe: [https://docs.google.com/document/d/1LwtuTcqxJYRZ5sKOAE9KDB0WlzXiwcqI/edit?usp=sharing&ouid=106756143487291349925&rtpof=true&sd=true](https://docs.google.com/document/d/14S_Y4-6pQ2XyMcUsTyjnDjbLVXb4C9KO/edit?usp=sharing&ouid=101279883039457215575&rtpof=true&sd=true)
+
 --------------------------------------------------------------------
 # Integrantes
 
