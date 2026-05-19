@@ -184,6 +184,25 @@ Hemos guardado los JSON listos para importar en la carpeta `datadog_exports`. Si
 4. Baja hasta encontrar la opción **"Notify if data is missing"** y pon que avise si no hay datos por más de 1 minuto.
 5. Usa `{{image_name.name}}` en el título para saber exactamente cuál de los 3 se apagó.
 --------------------------------------------------------------------
+# PRUEBAS MINIMAS:
+
+## PRUEBA DATADOG
+
+Mostrar dashboard datadog con metricas de HAProxy en tiempo real (los 60 segundos que tarda datadog en actualizar jajaja)
+El dashboard esta adjuntado en la carpeta Datadog_exports, donde se podra encontrar UN DASHBOARD y DOS MONITORES, se debe importar en datadog, recordar que el dashboard no funciona si la api de datadog no esta en el .env
+
+## PRUEBA ARTILLERY:
+
+Realizar una prueba artillery de alta carga y observar el pico de metricas en datadog.
+Las pruebas estan en la carpeta artillery, se ejecutan con ```docker-compose run --rm artillery run soak.yml``` desde la maquina lab, tal como se indica anteriormente en este documento.
+Luego se comprueban los picos o cambios en las graficas en Datadog.
+
+## PRUEBA DE ALERTAS:
+
+Disparar alertas configuradas en Datadog, por ejemplo, apagar un backend con ```docker-compose stop backend1```, el navegador utilizara una sola conexion tcp entre las que quedan activas, el frontend mostrara un solo nodo activo, pero es importante que ejecutemos en lab ```for i in {1..10}; do curl -s http://localhost:8081/health; echo ""; done``` para verificar que todavia existe un balance entre los backends, ```docker-compose stop backend2``` hara que el frontend use unicamente el nodo backend3.
+
+Para volver a levantarlos se debe hacer ```docker-compose start backend1 backend2``` y luego reiniciamos el contenedor de haproxy con ```docker-compose restart haproxy```
+--------------------------------------------------------------------
 # Informe
 Enlace a informe: https://docs.google.com/document/d/1LwtuTcqxJYRZ5sKOAE9KDB0WlzXiwcqI/edit?usp=sharing&ouid=106756143487291349925&rtpof=true&sd=true
 --------------------------------------------------------------------
