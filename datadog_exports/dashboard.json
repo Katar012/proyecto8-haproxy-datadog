@@ -5,13 +5,23 @@
     {
       "id": 2356582581061440,
       "definition": {
-        "title": "Request por segundo (Global)",
+        "title": "Request por segundo",
         "title_size": "16",
         "title_align": "left",
         "show_legend": true,
         "legend_layout": "auto",
-        "legend_columns": ["avg", "min", "max", "value", "sum"],
-        "time": { "type": "live", "unit": "minute", "value": 5 },
+        "legend_columns": [
+          "avg",
+          "min",
+          "max",
+          "value",
+          "sum"
+        ],
+        "time": {
+          "type": "live",
+          "unit": "minute",
+          "value": 5
+        },
         "type": "timeseries",
         "requests": [
           {
@@ -23,7 +33,11 @@
                 "query": "avg:haproxy.frontend.requests.rate{*}"
               }
             ],
-            "formulas": [{ "formula": "query1" }],
+            "formulas": [
+              {
+                "formula": "query1"
+              }
+            ],
             "style": {
               "palette": "dog_classic",
               "order_by": "values",
@@ -34,18 +48,33 @@
           }
         ]
       },
-      "layout": { "x": 0, "y": 0, "width": 4, "height": 2 }
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 4,
+        "height": 2
+      }
     },
     {
       "id": 4846010404939253,
       "definition": {
-        "title": "Latencia Promedio por Servidor",
+        "title": "latencia promedio",
         "title_size": "16",
         "title_align": "left",
         "show_legend": true,
         "legend_layout": "auto",
-        "legend_columns": ["avg", "min", "max", "value", "sum"],
-        "time": { "type": "live", "unit": "minute", "value": 5 },
+        "legend_columns": [
+          "avg",
+          "min",
+          "max",
+          "value",
+          "sum"
+        ],
+        "time": {
+          "type": "live",
+          "unit": "minute",
+          "value": 5
+        },
         "type": "timeseries",
         "requests": [
           {
@@ -54,10 +83,14 @@
               {
                 "data_source": "metrics",
                 "name": "query1",
-                "query": "avg:haproxy.backend.response.time{*} by {server}"
+                "query": "avg:haproxy.backend.response.time{type:backend} by {backend}"
               }
             ],
-            "formulas": [{ "formula": "query1" }],
+            "formulas": [
+              {
+                "formula": "query1"
+              }
+            ],
             "style": {
               "palette": "dog_classic",
               "order_by": "values",
@@ -68,18 +101,33 @@
           }
         ]
       },
-      "layout": { "x": 4, "y": 0, "width": 4, "height": 2 }
+      "layout": {
+        "x": 4,
+        "y": 0,
+        "width": 4,
+        "height": 2
+      }
     },
     {
       "id": 3601135114161064,
       "definition": {
-        "title": "Tasa de Errores por Servidor",
+        "title": "Tasa de Errores",
         "title_size": "16",
         "title_align": "left",
         "show_legend": true,
         "legend_layout": "auto",
-        "legend_columns": ["avg", "min", "max", "value", "sum"],
-        "time": { "type": "live", "unit": "minute", "value": 5 },
+        "legend_columns": [
+          "avg",
+          "min",
+          "max",
+          "value",
+          "sum"
+        ],
+        "time": {
+          "type": "live",
+          "unit": "minute",
+          "value": 5
+        },
         "type": "timeseries",
         "requests": [
           {
@@ -88,15 +136,22 @@
               {
                 "data_source": "metrics",
                 "name": "query1",
-                "query": "avg:haproxy.backend.response.5xx{*} by {server}"
+                "query": "avg:haproxy.backend.response.5xx{*}"
               },
               {
                 "data_source": "metrics",
                 "name": "query2",
-                "query": "avg:haproxy.backend.response.4xx{*} by {server}"
+                "query": "avg:haproxy.backend.response.4xx{*}"
               }
             ],
-            "formulas": [{ "formula": "query1" }, { "formula": "query2" }],
+            "formulas": [
+              {
+                "formula": "query1"
+              },
+              {
+                "formula": "query2"
+              }
+            ],
             "style": {
               "palette": "semantic",
               "order_by": "values",
@@ -107,7 +162,12 @@
           }
         ]
       },
-      "layout": { "x": 8, "y": 0, "width": 4, "height": 2 }
+      "layout": {
+        "x": 8,
+        "y": 0,
+        "width": 4,
+        "height": 2
+      }
     },
     {
       "id": 6061070626269423,
@@ -117,7 +177,13 @@
         "title_align": "left",
         "show_legend": true,
         "legend_layout": "auto",
-        "legend_columns": ["avg", "min", "max", "value", "sum"],
+        "legend_columns": [
+          "avg",
+          "min",
+          "max",
+          "value",
+          "sum"
+        ],
         "type": "timeseries",
         "requests": [
           {
@@ -138,7 +204,12 @@
           }
         ]
       },
-      "layout": { "x": 0, "y": 2, "width": 4, "height": 2 }
+      "layout": {
+        "x": 0,
+        "y": 2,
+        "width": 4,
+        "height": 2
+      }
     },
     {
       "id": 6191133729479831,
@@ -146,7 +217,11 @@
         "title": "Estado Individual de Backends",
         "title_size": "16",
         "title_align": "left",
-        "time": { "type": "live", "unit": "minute", "value": 1 },
+        "time": {
+          "type": "live",
+          "unit": "minute",
+          "value": 1
+        },
         "type": "toplist",
         "requests": [
           {
@@ -158,11 +233,20 @@
               }
             ],
             "response_format": "scalar",
-            "formulas": [{ "formula": "query1" }]
+            "formulas": [
+              {
+                "formula": "query1"
+              }
+            ]
           }
         ]
       },
-      "layout": { "x": 4, "y": 2, "width": 2, "height": 2 }
+      "layout": {
+        "x": 4,
+        "y": 2,
+        "width": 2,
+        "height": 2
+      }
     },
     {
       "id": 5759559728887079,
@@ -172,7 +256,13 @@
         "title_align": "left",
         "show_legend": true,
         "legend_layout": "auto",
-        "legend_columns": ["avg", "min", "max", "value", "sum"],
+        "legend_columns": [
+          "avg",
+          "min",
+          "max",
+          "value",
+          "sum"
+        ],
         "type": "timeseries",
         "requests": [
           {
@@ -193,17 +283,28 @@
           }
         ]
       },
-      "layout": { "x": 6, "y": 2, "width": 4, "height": 2 }
+      "layout": {
+        "x": 6,
+        "y": 2,
+        "width": 4,
+        "height": 2
+      }
     },
     {
       "id": 516973049797610,
       "definition": {
-        "title": "Conexiones por segundo por Servidor",
+        "title": "Conexiones por segundo",
         "title_size": "16",
         "title_align": "left",
         "show_legend": true,
         "legend_layout": "auto",
-        "legend_columns": ["avg", "min", "max", "value", "sum"],
+        "legend_columns": [
+          "avg",
+          "min",
+          "max",
+          "value",
+          "sum"
+        ],
         "type": "timeseries",
         "requests": [
           {
@@ -212,10 +313,14 @@
               {
                 "data_source": "metrics",
                 "name": "query1",
-                "query": "avg:haproxy.backend.session.rate{*} by {server}"
+                "query": "avg:haproxy.backend.session.rate{*}"
               }
             ],
-            "formulas": [{ "formula": "query1" }],
+            "formulas": [
+              {
+                "formula": "query1"
+              }
+            ],
             "style": {
               "palette": "dog_classic",
               "order_by": "values",
@@ -226,7 +331,140 @@
           }
         ]
       },
-      "layout": { "x": 0, "y": 4, "width": 4, "height": 2 }
+      "layout": {
+        "x": 0,
+        "y": 4,
+        "width": 4,
+        "height": 2
+      }
+    },
+    {
+      "id": 989370699802484,
+      "definition": {
+        "title": "exito vs errores",
+        "title_size": "16",
+        "title_align": "left",
+        "time": {
+          "type": "live",
+          "unit": "minute",
+          "value": 5
+        },
+        "requests": [
+          {
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "query1",
+                "query": "avg:haproxy.backend.response.2xx{*}",
+                "aggregator": "sum"
+              },
+              {
+                "data_source": "metrics",
+                "name": "query2",
+                "query": "avg:haproxy.backend.response.4xx{*}",
+                "aggregator": "sum"
+              },
+              {
+                "data_source": "metrics",
+                "name": "query3",
+                "query": "avg:haproxy.backend.response.5xx{*}",
+                "aggregator": "sum"
+              }
+            ],
+            "response_format": "scalar",
+            "style": {
+              "palette": "datadog16"
+            },
+            "formulas": [
+              {
+                "formula": "query1"
+              },
+              {
+                "formula": "query2"
+              },
+              {
+                "formula": "query3"
+              }
+            ],
+            "sort": {
+              "count": 500,
+              "order_by": [
+                {
+                  "type": "formula",
+                  "index": 0,
+                  "order": "desc"
+                }
+              ]
+            }
+          }
+        ],
+        "type": "sunburst",
+        "legend": {
+          "type": "automatic"
+        }
+      },
+      "layout": {
+        "x": 4,
+        "y": 4,
+        "width": 4,
+        "height": 2
+      }
+    },
+    {
+      "id": 5765672734603917,
+      "definition": {
+        "title": "Megabytes/segundo saliendo y entrando",
+        "title_size": "16",
+        "title_align": "left",
+        "show_legend": true,
+        "legend_layout": "auto",
+        "legend_columns": [
+          "avg",
+          "min",
+          "max",
+          "value",
+          "sum"
+        ],
+        "type": "timeseries",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "query1",
+                "query": "avg:haproxy.backend.bytes.out_rate{*}"
+              },
+              {
+                "data_source": "metrics",
+                "name": "query2",
+                "query": "avg:haproxy.backend.bytes.in_rate{*}"
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "query1"
+              },
+              {
+                "formula": "query2"
+              }
+            ],
+            "style": {
+              "palette": "dog_classic",
+              "order_by": "values",
+              "line_type": "solid",
+              "line_width": "normal"
+            },
+            "display_type": "line"
+          }
+        ]
+      },
+      "layout": {
+        "x": 8,
+        "y": 4,
+        "width": 4,
+        "height": 2
+      }
     }
   ],
   "template_variables": [],
