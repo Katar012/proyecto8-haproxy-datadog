@@ -204,7 +204,7 @@ Disparar alertas configuradas en Datadog, por ejemplo, apagar un backend con ```
 Para volver a levantarlos se debe hacer ```docker-compose start backend1 backend2``` y luego reiniciamos el contenedor de haproxy con ```docker-compose restart haproxy```
 --------------------------------------------------------------------
 # Informe
-Enlace a informe: https://drive.google.com/file/d/1xKcjIC9beZJuVpRh7Vrr-TWBZfLv5UST/view?usp=sharing
+Enlace a informe: https://drive.google.com/file/d/1YJOOVd8K7pA9xLFL6fEDbi1W9fQnaQv5/view?usp=sharing
 --------------------------------------------------------------------
 # Integrantes
 
