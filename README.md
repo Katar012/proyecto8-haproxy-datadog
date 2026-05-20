@@ -143,6 +143,9 @@ Y la descarga de archivos es servida directamente por Nginx desde la maquina sto
 NOTA: Anteriormente en la version 3.2.0 Flask se encargaba de la carga y descarga de archivos a la vez, demorando mucho en archivos superiores a las 200mb.
 
 ## Implementacion de Nginx
+
+NOTA: EL ULTIMO RELEASE CONTIENE ERRORES DE PROVISIONAMIENTO EN LA MAQUINA STORAGE. Las notas de la version [4.1.0](https://github.com/Katar012/proyecto8-haproxy-datadog/releases/tag/v4.1.0) contienen la solucion comando a comando desde la maquina storage. Luego de aplicar eso, volver a este documento.
+
 Para relegar a flask unicamente a la logica de los backends y la subida de archivos, utilizamos Nginx con la finalidad de aliviar la descarga de archivos, evitando asi tener que ocupar de un timeout mas largo para que flask termine de procesar la solicitud de descarga exitosamente.
 .
 Flask queda unicamente encargado de:
@@ -160,29 +163,8 @@ En caso tal de limpiar el entorno mal (o que el consumo de cpu y ram no aparezca
 MENCIONADO ARRIBA, PUEDE QUE NO FUNCIONE EN la version 4.0.0
 
 ### 2. Creación de Alertas/Monitores
-Hemos configurado dos monitores críticos. Para que a tus compañeros se les haga más fácil crearlos, pueden importar la configuración exportada en formato JSON, o crearlos manualmente:
+Hemos configurado dos monitores críticos. Para que a tus compañeros se les haga más fácil crearlos, pueden importar la configuración exportada en formato JSON, estan en Datadog_exports.
 
-**Opción A (Importar JSON):**
-Hemos guardado los JSON listos para importar en la carpeta `datadog_exports`. Simplemente cópialos en Datadog:
-1. `datadog_exports/monitor_errores.json`: Te alertará si la tasa de errores HTTP 500 supera el 5%.
-2. `datadog_exports/monitor_backend_caido.json`: Te alertará e indicará el nombre exacto de cuál de los servidores se apagó.
-
-**Opción B (Manual paso a paso):**
-
-**Alerta 1: Tasa de Errores > 5%**
-1. Ve a **Monitors -> New Monitor -> Metric**.
-2. Elige la pestaña **Formula**.
-3. Letra `a`: `haproxy.backend.response.5xx{*}`
-4. Letra `b`: `haproxy.frontend.requests.rate{*}`
-5. Fórmula: `(a / b) * 100`
-6. En Set Alert Conditions pon **Above 5** y dale a Guardar.
-
-**Alerta 2: Backend Caído**
-1. Ve a **Monitors -> New Monitor -> Metric**.
-2. En métrica escribe `docker.cpu.usage`, from `image_name:vagrant_backend*`, avg by `image_name`.
-3. Datadog lo detectará como una "Multi Alert".
-4. Baja hasta encontrar la opción **"Notify if data is missing"** y pon que avise si no hay datos por más de 1 minuto.
-5. Usa `{{image_name.name}}` en el título para saber exactamente cuál de los 3 se apagó.
 --------------------------------------------------------------------
 # PRUEBAS MINIMAS:
 
@@ -202,10 +184,9 @@ Luego se comprueban los picos o cambios en las graficas en Datadog.
 Disparar alertas configuradas en Datadog, por ejemplo, apagar un backend con ```docker-compose stop backend1```, el navegador utilizara una sola conexion tcp entre las que quedan activas, el frontend mostrara un solo nodo activo, pero es importante que ejecutemos en lab ```for i in {1..10}; do curl -s http://localhost:8081/health; echo ""; done``` para verificar que todavia existe un balance entre los backends, ```docker-compose stop backend2``` hara que el frontend use unicamente el nodo backend3.
 
 Para volver a levantarlos se debe hacer ```docker-compose start backend1 backend2``` y luego reiniciamos el contenedor de haproxy con ```docker-compose restart haproxy```
+
 --------------------------------------------------------------------
-# Informe
-Enlace a informe: https://drive.google.com/file/d/1YJOOVd8K7pA9xLFL6fEDbi1W9fQnaQv5/view?usp=sharing
---------------------------------------------------------------------
+
 # Integrantes
 
 ### Juan David Cuero Reina.
