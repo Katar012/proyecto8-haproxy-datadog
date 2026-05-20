@@ -22,16 +22,51 @@ graph TD;
     HAProxy -.->|Metrics Socket| Datadog
     Datadog -->|Metrics & Logs| DatadogCloud
 ```
+```mermaid
+graph TD
+    %% Infraestructura
+    Vagrant[Vagrantfile] -->|Provisiona| VM_LAB[VM LAB - 192.168.56.10]
+    Vagrant -->|Provisiona| VM_STORAGE[VM STORAGE - 192.168.56.20]
 
-## Arquitectura stateless
+    subgraph VM_LAB_VM [Máquina Virtual LAB]
+        HAProxy[HAProxy 2.6]
+        B1[Backend1 Flask]
+        B2[Backend2 Flask]
+        B3[Backend3 Flask]
+        DD[Datadog Agent]
+        ART[Artillery]
+    end
 
-Los contenedores backend Flask no almacenan archivos localmente.
+    subgraph VM_STORAGE_VM [Máquina Virtual STORAGE]
+        SSH[OpenSSH SFTP Server]
+        NGINX[NGINX]
+        Files[Directorio uploads]
+        
+        SSH --> Files
+        NGINX -->|Alias /files/| Files
+    end
 
-Toda persistencia se delega a la máquina storage mediante:
-- SFTP para uploads
-- Nginx para distribución de archivos
+    %% Flujos de entrada
+    User[Usuario / Frontend] -->|HTTP :8081| HAProxy
+    ART -->|Carga HTTP| HAProxy
 
-Esto permite mantener backends stateless detras del balanceador HAProxy.
+    %% Balanceo
+    HAProxy -->|Round Robin| B1
+    HAProxy -->|Round Robin| B2
+    HAProxy -->|Round Robin| B3
+
+    %% Almacenamiento
+    B1 -->|Upload SFTP| SSH
+    B2 -->|Upload SFTP| SSH
+    B3 -->|Upload SFTP| SSH
+
+    %% Descarga
+    User -->|Download Files| NGINX
+
+    %% Monitoreo
+    HAProxy -.->|Socket UNIX| DD
+    DD -->|Logs y Métricas| DatadogCloud[Datadog Cloud]
+```
 
 --------------------------------------------------------------------
 # Ejecución
